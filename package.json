@@ -1,0 +1,91 @@
+{
+  "name": "@gibme/web-ui",
+  "version": "1.0.0",
+  "description": "A simple web-ui helper",
+  "main": "./dist/web-ui.js",
+  "types": "./dist/web-ui.d.ts",
+  "files": [
+    "dist/*"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn build:typescript",
+    "build:docs": "./node_modules/.bin/typedoc",
+    "build:typescript": "./node_modules/.bin/tsc",
+    "build:webpack": "yarn build:typescript && yarn build:_webpack",
+    "build:_webpack": "./node_modules/.bin/webpack",
+    "test": "yarn test:style && yarn test:mocha",
+    "test:style": "yarn style",
+    "test:mocha": "./node_modules/.bin/mocha --exit --timeout 30000 --require ts-node/register test/test.ts",
+    "style": "./node_modules/.bin/eslint src/**/*.ts test/**/*.ts",
+    "fix-style": "./node_modules/.bin/eslint --fix src/**/*.ts test/**/*.ts",
+    "fix:style": "yarn fix-style",
+    "prepublishOnly": "yarn build:webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gibme-npm/web-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gibme-npm/web-ui/issues"
+  },
+  "homepage": "https://gibme-npm.github.io/web-ui/",
+  "engines": {
+    "node": ">=16"
+  },
+  "engineStrict": true,
+  "author": {
+    "name": "Brandon Lehmann",
+    "email": "brandonlehmann@gmail.com"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "assert": "^2.0.0",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "css-loader": "^6.7.2",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.26.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.4.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "expose-loader": "^4.0.0",
+    "https-browserify": "^1.0.0",
+    "mocha": "^10.1.0",
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "style-loader": "^3.3.1",
+    "ts-node": "^10.9.1",
+    "typedoc": "^0.23.21",
+    "typescript": "^4.9.3",
+    "url": "^0.11.0",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.2.1",
+    "@gibme/local-storage": "^1.0.3",
+    "@gibme/timer": "^1.0.1",
+    "@popperjs/core": "^2.11.6",
+    "@types/bootstrap": "^5.2.6",
+    "@types/jquery": "^3.5.14",
+    "@types/numeral": "^2.0.2",
+    "bootstrap": "^5.2.3",
+    "cross-fetch": "^3.1.5",
+    "datatables.net-bs5": "^1.13.1",
+    "datatables.net-fixedheader-bs5": "^3.3.1",
+    "datatables.net-responsive-bs5": "^2.4.0",
+    "gasparesganga-jquery-loading-overlay": "https://github.com/brandonlehmann/jquery-loading-overlay#31c61509",
+    "jquery": "^3.6.1",
+    "moment": "^2.29.4",
+    "numeral": "^2.0.6"
+  }
+}
