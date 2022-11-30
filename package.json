@@ -12,7 +12,7 @@
     "build": "yarn build:typescript",
     "build:docs": "./node_modules/.bin/typedoc",
     "build:typescript": "./node_modules/.bin/tsc",
-    "build:webpack": "./node_modules/.bin/webpack",
+    "build:webpack": "./node_modules/.bin/auto-pack",
     "test": "yarn test:style && yarn test:mocha",
     "test:style": "yarn style",
     "test:mocha": "./node_modules/.bin/mocha --exit --timeout 240000 --require ts-node/register test/test.ts",
@@ -37,16 +37,17 @@
     "name": "Brandon Lehmann",
     "email": "brandonlehmann@gmail.com"
   },
+  "webpack": {
+    "entry": {
+      "WebUI": "./src/web-ui.ts"
+    }
+  },
   "devDependencies": {
+    "@gibme/auto-pack": "^0.0.2",
     "@types/mocha": "^10.0.0",
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
-    "assert": "^2.0.0",
-    "browserify-zlib": "^0.2.0",
-    "buffer": "^6.0.3",
-    "crypto-browserify": "^3.12.0",
-    "css-loader": "^6.7.2",
     "dotenv": "^16.0.3",
     "eslint": "^8.26.0",
     "eslint-config-standard": "^17.0.0",
@@ -54,21 +55,10 @@
     "eslint-plugin-n": "^15.4.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "expose-loader": "^4.0.0",
-    "https-browserify": "^1.0.0",
     "mocha": "^10.1.0",
-    "os-browserify": "^0.3.0",
-    "process": "^0.11.10",
-    "stream-browserify": "^3.0.0",
-    "stream-http": "^3.2.0",
-    "style-loader": "^3.3.1",
-    "ts-loader": "^9.4.1",
     "ts-node": "^10.9.1",
     "typedoc": "^0.23.21",
-    "typescript": "^4.9.3",
-    "url": "^0.11.0",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.0"
+    "typescript": "^4.9.3"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.2.1",
