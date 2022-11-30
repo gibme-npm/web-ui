@@ -12,15 +12,14 @@
     "build": "yarn build:typescript",
     "build:docs": "./node_modules/.bin/typedoc",
     "build:typescript": "./node_modules/.bin/tsc",
-    "build:webpack": "yarn build:typescript && yarn build:_webpack",
-    "build:_webpack": "./node_modules/.bin/webpack",
+    "build:webpack": "./node_modules/.bin/webpack",
     "test": "yarn test:style && yarn test:mocha",
     "test:style": "yarn style",
-    "test:mocha": "./node_modules/.bin/mocha --exit --timeout 30000 --require ts-node/register test/test.ts",
+    "test:mocha": "./node_modules/.bin/mocha --exit --timeout 240000 --require ts-node/register test/test.ts",
     "style": "./node_modules/.bin/eslint src/**/*.ts test/**/*.ts",
     "fix-style": "./node_modules/.bin/eslint --fix src/**/*.ts test/**/*.ts",
     "fix:style": "yarn fix-style",
-    "prepublishOnly": "yarn build:webpack"
+    "prepublishOnly": "yarn build && yarn build:webpack"
   },
   "repository": {
     "type": "git",
@@ -63,6 +62,7 @@
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "style-loader": "^3.3.1",
+    "ts-loader": "^9.4.1",
     "ts-node": "^10.9.1",
     "typedoc": "^0.23.21",
     "typescript": "^4.9.3",

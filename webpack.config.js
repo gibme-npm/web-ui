@@ -5,21 +5,23 @@ const path = require('path');
 
 module.exports = {
     mode: 'production',
+    devtool: 'source-map',
     entry: {
-        WebUI: './dist/web-ui.js'
+        WebUI: './src/web-ui.ts'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].bundle.js',
-        // library: '[name]', // we want to dump the exports to the global space
-        libraryTarget: 'umd',
-        libraryExport: 'default'
+        library: {
+            type: 'umd'
+        }
     },
     optimization: {
         usedExports: true,
         sideEffects: true
     },
     resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
         fallback: {
             fs: false,
             path: false,
@@ -59,6 +61,11 @@ module.exports = {
                 options: {
                     exposes: ['$', 'jQuery']
                 }
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/
             }
         ]
     },
