@@ -34,6 +34,7 @@ import LocalStorage from '@gibme/local-storage';
 import numeral from 'numeral';
 import StatusModal from './status_modal';
 import Timer from '@gibme/timer';
+import GoogleChartsLoader from './google_charts';
 export {
     $,
     fetch,
@@ -45,7 +46,8 @@ export {
     LocalStorage,
     numeral,
     StatusModal,
-    Timer
+    Timer,
+    GoogleChartsLoader
 };
 
 /**
@@ -54,6 +56,14 @@ export {
  * @param type
  */
 export const createElement = (type: string): JQuery<HTMLElement> => $(document.createElement(type));
+
+/**
+ * Fetches the HTML DOM Object by the id or from a JQuery HTML Element
+ *
+ * @param id
+ */
+export const fetchElement = (id: string | JQuery<HTMLElement>): HTMLElement =>
+    typeof id === 'string' ? $(`#${name}`)[0] : id[0];
 
 /**
  * Sleeps for the specified timeout period
@@ -74,5 +84,7 @@ export default {
     StatusModal,
     Timer,
     createElement,
-    sleep
+    fetchElement,
+    sleep,
+    GoogleChartsLoader
 };

@@ -1,6 +1,6 @@
 {
   "name": "@gibme/web-ui",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple web-ui helper",
   "main": "./dist/web-ui.js",
   "types": "./dist/web-ui.d.ts",
@@ -66,6 +66,7 @@
     "@gibme/timer": "^1.0.1",
     "@popperjs/core": "^2.11.6",
     "@types/bootstrap": "^5.2.6",
+    "@types/google.visualization": "^0.0.68",
     "@types/jquery": "^3.5.14",
     "@types/numeral": "^2.0.2",
     "bootstrap": "^5.2.3",

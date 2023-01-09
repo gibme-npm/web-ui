@@ -11,6 +11,7 @@ Bundled up *common* UI tools
 * [Numeral.js](https://www.npmjs.com/package/numeral)
 * [LocalStorage](https://www.npmjs.com/package/local-storage)
 * [Timer](https://gibme-npm.github.io/timer/) w/ events
+* [Google Charts Loader](https://developers.google.com/chart)
 
 ## Documentation
 
