@@ -34,7 +34,8 @@ import LocalStorage from '@gibme/local-storage';
 import numeral from 'numeral';
 import StatusModal from './status_modal';
 import Timer from '@gibme/timer';
-import GoogleChartsLoader from './google_charts';
+import GoogleChartsLoader, { ChartOptions } from './google_charts';
+import GoogleMapsLoader, { USACentered, MapOptions } from './google_maps';
 export {
     $,
     fetch,
@@ -47,7 +48,11 @@ export {
     numeral,
     StatusModal,
     Timer,
-    GoogleChartsLoader
+    GoogleChartsLoader,
+    GoogleMapsLoader,
+    USACentered,
+    MapOptions,
+    ChartOptions
 };
 
 /**
@@ -86,5 +91,7 @@ export default {
     createElement,
     fetchElement,
     sleep,
-    GoogleChartsLoader
+    GoogleChartsLoader,
+    GoogleMapsLoader,
+    USACentered
 };

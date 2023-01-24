@@ -20,28 +20,29 @@
 
 import $ from 'jquery';
 
-declare let google: any;
+/**
+ * The Google Charts loader options
+ */
+export interface ChartOptions {
+    version: string | number;
+}
 
 /**
  * Loads the Google Charts API
  *
  * @param packages https://developers.google.com/chart/interactive/docs/gallery
- * @param callback the callback to call when the charts module is loaded
- * @param version the version of the API to load
+ * @param options loader options to use
  */
 export const GoogleChartsLoader = async (
     packages: string[] = ['corechart'],
-    callback?: () => void,
-    version: string | number = 'current'
+    options: Partial<ChartOptions> = { version: 'current' }
 ): Promise<void> => {
     return new Promise(resolve => {
         $.getScript('https://www.gstatic.com/charts/loader.js', () => {
-            google.charts.load(version, { packages });
-            google.charts.setOnLoadCallback(() => {
-                if (callback) {
-                    setTimeout(callback, 1); // forces out of scope to prevent blocking
-                }
+            options.version ||= 'current';
 
+            google.charts.load(options.version, { packages });
+            google.charts.setOnLoadCallback(() => {
                 return resolve();
             });
         });

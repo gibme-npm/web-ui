@@ -6,14 +6,20 @@
       "dom",
       "scripthost"
     ],
-    "types": ["jquery", "bootstrap", "datatables.net-bs5"],
     "module": "commonjs",
     "declaration": true,
     "outDir": "./dist",
     "strict": true,
     "downlevelIteration": true,
     "esModuleInterop": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "types": [
+      "jquery",
+      "bootstrap",
+      "datatables.net-bs5",
+      "google.visualization",
+      "google.maps"
+    ]
   },
   "include": [
     "src/**/*"
