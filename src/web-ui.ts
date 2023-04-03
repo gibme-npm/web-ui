@@ -34,6 +34,8 @@ import LocalStorage from '@gibme/local-storage';
 import numeral from 'numeral';
 import StatusModal from './status_modal';
 import Timer from '@gibme/timer';
+import moment from 'moment';
+import HLS, { HlsConfig as HLSConfig } from 'hls.js';
 import GoogleChartsLoader, { ChartOptions } from './google_charts';
 import GoogleMapsLoader, { USACentered, MapOptions } from './google_maps';
 export {
@@ -46,13 +48,16 @@ export {
     LoadingOverlayOptions,
     LocalStorage,
     numeral,
+    moment,
     StatusModal,
     Timer,
     GoogleChartsLoader,
     GoogleMapsLoader,
     USACentered,
     MapOptions,
-    ChartOptions
+    ChartOptions,
+    HLS,
+    HLSConfig
 };
 
 /**
@@ -108,6 +113,37 @@ export const createMediaElement = (
 };
 
 /**
+ * Creates a new JQuery HTML Media Element with the properties set as defined in the options
+ * It loads a hls.js player around the element so that it can load that content
+ *
+ * Note: if autoplay is enabled, muted will be set to true
+ *
+ * @param src
+ * @param options
+ * @param hlsConfig
+ */
+export const createHLSMediaElement = (
+    src: string,
+    options: Partial<VideoElementOptions> = {},
+    hlsConfig: Partial<HLSConfig> = {}
+): [JQuery<HTMLMediaElement>, HLS] => {
+    const hls = new HLS(hlsConfig);
+
+    const element = createMediaElement(undefined, options);
+
+    hls.loadSource(src);
+    hls.attachMedia(element[0]);
+
+    if (options.autoplay) {
+        hls.on(HLS.Events.MEDIA_ATTACHED, () => {
+            element.trigger('play');
+        });
+    }
+
+    return [element, hls];
+};
+
+/**
  * Fetches the HTML DOM Object by the id or from a JQuery HTML Element
  *
  * @param id
@@ -131,6 +167,7 @@ export default {
     LoadingOverlay,
     LocalStorage,
     numeral,
+    moment,
     StatusModal,
     Timer,
     createElement,
@@ -138,5 +175,6 @@ export default {
     sleep,
     GoogleChartsLoader,
     GoogleMapsLoader,
-    USACentered
+    USACentered,
+    HLS
 };

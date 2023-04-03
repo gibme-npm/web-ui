@@ -1,6 +1,6 @@
 {
   "name": "@gibme/web-ui",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A simple web-ui helper",
   "main": "./dist/web-ui.js",
   "types": "./dist/web-ui.d.ts",
@@ -39,7 +39,9 @@
   },
   "webpack": {
     "entry": {
-      "WebUI": "./src/web-ui.ts"
+      "WebUI": "./src/web-ui.ts",
+      "Google.Maps": "./src/google_maps.ts",
+      "Google.Charts": "./src/google_charts.ts"
     }
   },
   "devDependencies": {
@@ -76,6 +78,7 @@
     "datatables.net-fixedheader-bs5": "^3.3.2",
     "datatables.net-responsive-bs5": "^2.4.1",
     "gasparesganga-jquery-loading-overlay": "https://github.com/brandonlehmann/jquery-loading-overlay#31c61509",
+    "hls.js": "^1.3.5",
     "jquery": "^3.6.1",
     "moment": "^2.29.4",
     "numeral": "^2.0.6"

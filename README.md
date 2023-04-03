@@ -9,8 +9,10 @@ Bundled up *common* UI tools
 * [cross-fetch](https://www.npmjs.com/package/cross-fetch)
 * [FontAwesome-free](https://www.npmjs.com/package/@fortawesome/fontawesome-free)
 * [Numeral.js](https://www.npmjs.com/package/numeral)
+* [Moment.js](https://www.npmjs.com/package/moment)
 * [LocalStorage](https://www.npmjs.com/package/local-storage)
 * [Timer](https://gibme-npm.github.io/timer/) w/ events
+* [hls.js](https://www.npmjs.com/package/hls.js)
 * [Google Charts Loader](https://developers.google.com/chart)
 * [Google Maps Loader](https://developers.google.com/maps)
 
