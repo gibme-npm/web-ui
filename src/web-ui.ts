@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2022, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -60,15 +60,60 @@ export {
  *
  * @param type
  */
-export const createElement = (type: string): JQuery<HTMLElement> => $(document.createElement(type));
+export const createElement = <Type extends HTMLElement = HTMLElement>(type: string): JQuery<Type> =>
+    $(document.createElement(type)) as any;
+
+/**
+ * Video element creation options
+ */
+export interface VideoElementOptions {
+    autoplay: boolean;
+    controls: boolean;
+    loop: boolean;
+    muted: boolean;
+    playsinline: boolean;
+
+    [key: string]: boolean;
+}
+
+/**
+ * Creates a new JQuery HTML Media Element with the properties set as defined in the options
+ *
+ * Note: if autoplay is enabled, muted will be set to true
+ *
+ * @param src
+ * @param options
+ */
+export const createMediaElement = (
+    src?: string,
+    options: Partial<VideoElementOptions> = {}
+): JQuery<HTMLMediaElement> => {
+    if (options.autoplay) {
+        options.muted = true;
+    }
+
+    const element = createElement<HTMLMediaElement>('video')
+        .prop({
+            src,
+            ...options
+        });
+
+    for (const key of Object.keys(options)) {
+        if (options[key] === true) {
+            element.attr(key, '');
+        }
+    }
+
+    return element;
+};
 
 /**
  * Fetches the HTML DOM Object by the id or from a JQuery HTML Element
  *
  * @param id
  */
-export const fetchElement = (id: string | JQuery<HTMLElement>): HTMLElement =>
-    typeof id === 'string' ? $(`#${name}`)[0] : id[0];
+export const fetchElement = <Type extends HTMLElement = HTMLElement>(id: string | JQuery<HTMLElement>): Type =>
+    (typeof id === 'string' ? $(`#${name}`)[0] : id[0]) as Type;
 
 /**
  * Sleeps for the specified timeout period

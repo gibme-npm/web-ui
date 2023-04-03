@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2022, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -82,12 +82,16 @@ export default abstract class LoadingOverlay {
      * @param options
      * @param target
      */
-    public static hide (options: Partial<LoadingOverlayOptions> = {}, target?: JQuery<HTMLElement>) {
+    public static hide <Type extends HTMLElement = HTMLElement> (
+        options: Partial<LoadingOverlayOptions> = {},
+        target: JQuery<Type> = $(document.body) as any
+    ) {
         options.zIndex ||= 2147483646;
+
         if (options.zIndex === Number.MAX_SAFE_INTEGER) {
             options.zIndex = Number.MAX_SAFE_INTEGER - 1;
         }
-        target ||= $(document.body);
+
         target.LoadingOverlay('hide', options);
     }
 
@@ -97,12 +101,16 @@ export default abstract class LoadingOverlay {
      * @param options
      * @param target
      */
-    public static progress (options: Partial<LoadingOverlayOptions> = {}, target?: JQuery<HTMLElement>) {
+    public static progress <Type extends HTMLElement = HTMLElement> (
+        options: Partial<LoadingOverlayOptions> = {},
+        target: JQuery<Type> = $(document.body) as any
+    ) {
         options.zIndex ||= 2147483646;
+
         if (options.zIndex === Number.MAX_SAFE_INTEGER) {
             options.zIndex = Number.MAX_SAFE_INTEGER - 1;
         }
-        target ||= $(document.body);
+
         target.LoadingOverlay('progress', options);
     }
 
@@ -112,15 +120,16 @@ export default abstract class LoadingOverlay {
      * @param options
      * @param target
      */
-    public static resize (
+    public static resize <Type extends HTMLElement = HTMLElement> (
         options: Partial<LoadingOverlayOptions> = {},
-        target?: JQuery<HTMLElement>
+        target: JQuery<Type> = $(document.body) as any
     ) {
         options.zIndex ||= 2147483646;
+
         if (options.zIndex === Number.MAX_SAFE_INTEGER) {
             options.zIndex = Number.MAX_SAFE_INTEGER - 1;
         }
-        target ||= $(document.body);
+
         target.LoadingOverlay('resize', options);
     }
 
@@ -131,17 +140,18 @@ export default abstract class LoadingOverlay {
      * @param options
      * @param target
      */
-    public static show (
+    public static show <Type extends HTMLElement = HTMLElement> (
         text?: string,
         options: Partial<LoadingOverlayOptions & { timeout: number }> = {},
-        target?: JQuery<HTMLElement>
+        target: JQuery<Type> = $(document.body) as any
     ) {
         options.text = text;
         options.zIndex ||= 2147483646;
+
         if (options.zIndex === Number.MAX_SAFE_INTEGER) {
             options.zIndex = Number.MAX_SAFE_INTEGER - 1;
         }
-        target = target || $(document.body);
+
         target.LoadingOverlay('show', options);
 
         if (options.timeout) {
@@ -155,8 +165,10 @@ export default abstract class LoadingOverlay {
      * @param text
      * @param target
      */
-    public static text (text: string, target?: JQuery<HTMLElement>) {
-        target = target || $(document.body);
+    public static text <Type extends HTMLElement = HTMLElement> (
+        text: string,
+        target: JQuery<Type> = $(document.body) as any
+    ) {
         target.LoadingOverlay('text', text as any);
     }
 }

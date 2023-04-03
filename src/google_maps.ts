@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2022, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -56,9 +56,9 @@ export interface MapOptions extends google.maps.MapOptions {
  * @param options https://developers.google.com/maps/documentation/javascript/overview#MapOptions
  * @constructor
  */
-export const GoogleMapsLoader = async (
+export const GoogleMapsLoader = async <Type extends HTMLElement = HTMLElement> (
     API_KEY: string,
-    element: string | JQuery<HTMLElement> = $(document.body),
+    element: string | JQuery<Type> = $(document.body) as any,
     options: Partial<MapOptions> = USACentered
 ): Promise<google.maps.Map> => {
     return new Promise(resolve => {

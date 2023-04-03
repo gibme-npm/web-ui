@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2022, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,8 @@ import $ from 'jquery';
 import { createElement } from './web-ui';
 
 export default abstract class StatusModal {
-    private static readonly _text = $('#statusText');
-    private static readonly _element = $('#statusModal');
+    private static readonly _text = $('#statusText') as any;
+    private static readonly _element = $('#statusModal') as any;
 
     /**
      * Displays a modal with jquery using the supplied elements, message, and style
@@ -37,13 +37,13 @@ export default abstract class StatusModal {
      * @param statusTextElement
      * @param statusModalElement
      */
-    public static show (
+    public static show <Text extends HTMLElement = HTMLElement, Modal extends HTMLElement = HTMLElement> (
         message: any,
         isError = false,
         timeout?: number,
         style?: { successClass?: string, errorClass?: string },
-        statusTextElement: JQuery<HTMLElement> = StatusModal._text,
-        statusModalElement: JQuery<HTMLElement> = StatusModal._element
+        statusTextElement: JQuery<Text> = StatusModal._text,
+        statusModalElement: JQuery<Modal> = StatusModal._element
     ) {
         [statusTextElement, statusModalElement] = StatusModal._construct(statusTextElement, statusModalElement);
 
@@ -95,12 +95,12 @@ export default abstract class StatusModal {
      * @param statusModalElement
      * @protected
      */
-    protected static _construct (
-        statusTextElement: JQuery<HTMLElement> = StatusModal._text,
-        statusModalElement: JQuery<HTMLElement> = StatusModal._element
-    ): [JQuery<HTMLElement>, JQuery<HTMLElement>] {
+    protected static _construct <Text extends HTMLElement = HTMLElement, Modal extends HTMLElement = HTMLElement> (
+        statusTextElement: JQuery<Text> = StatusModal._text,
+        statusModalElement: JQuery<Modal> = StatusModal._element
+    ): [JQuery<Text>, JQuery<Modal>] {
         if (!statusTextElement.length || !statusModalElement.length) {
-            statusModalElement = createElement('div')
+            statusModalElement = createElement<Modal>('div')
                 .addClass('modal')
                 .addClass('fade')
                 .attr('tabindex', '-1')
@@ -137,7 +137,7 @@ export default abstract class StatusModal {
                         const body = createElement('div')
                             .addClass('modal-body');
 
-                        statusTextElement = createElement('p')
+                        statusTextElement = createElement<Text>('p')
                             .attr('id', 'statusText')
                             .css('font-size', '12px')
                             .addClass('alert');
