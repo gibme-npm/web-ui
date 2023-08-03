@@ -19,16 +19,10 @@
 // SOFTWARE.
 
 import $ from 'jquery';
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './bootstrap5';
+import './fontawesome';
+import { DataTableConfig, DataTable } from './datatables';
 import fetch, { Headers, Request, Response } from '@gibme/fetch';
-import 'datatables.net-bs5/js/dataTables.bootstrap5';
-import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
-import 'datatables.net-fixedheader-bs5/js/fixedHeader.bootstrap5';
-import 'datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css';
-import 'datatables.net-responsive-bs5/js/responsive.bootstrap5';
-import 'datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css';
-import '@fortawesome/fontawesome-free/js/all';
 import LoadingOverlay, { LoadingOverlayOptions } from './loading_overlay';
 import LocalStorage from '@gibme/local-storage';
 import numeral from 'numeral';
@@ -38,7 +32,6 @@ import moment from 'moment';
 import HLS, { HlsConfig as HLSConfig } from 'hls.js';
 import GoogleChartsLoader, { ChartOptions } from './google_charts';
 import GoogleMapsLoader, { USACentered, MapOptions } from './google_maps';
-import { Config as DataTableConfig } from 'datatables.net-bs5/types/dataTables.bootstrap5';
 
 /**
  * Video element creation options
@@ -73,7 +66,8 @@ export {
     ChartOptions,
     HLS,
     HLSConfig,
-    DataTableConfig
+    DataTableConfig,
+    DataTable
 };
 
 export class UIHelper {
@@ -208,5 +202,6 @@ export default {
     GoogleChartsLoader,
     GoogleMapsLoader,
     USACentered,
-    HLS
+    HLS,
+    DataTable
 };
