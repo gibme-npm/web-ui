@@ -30,8 +30,8 @@ import 'datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css';
 import 'datatables.net-colreorder-bs5';
 import 'datatables.net-colreorder-bs5/css/colReorder.bootstrap5.min.css';
 
-import 'datatables.net-editor-bs5/js';
-import 'datatables.net-editor-bs5/css/editor.bootstrap5.min.css';
+// import 'datatables.net-editor-bs5/js';
+// import 'datatables.net-editor-bs5/css/editor.bootstrap5.min.css';
 
 import 'datatables.net-fixedcolumns-bs5';
 import 'datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css';
