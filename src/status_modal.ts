@@ -18,143 +18,75 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import $ from 'jquery';
-import { createElement } from './web-ui';
+import ModalHelper from './modal_helper';
+import UIHelper from './ui_helper';
 
-export default abstract class StatusModal {
-    private static readonly _text = $('#statusText') as any;
-    private static readonly _element = $('#statusModal') as any;
-
+export default abstract class StatusModal extends ModalHelper {
     /**
      * Displays a modal with jquery using the supplied elements, message, and style
      *
      * @param message
+     * @param header
      * @param isError
-     * @param timeout if defined (in milliseconds), the modal will auto close
+     * @param timeout
      * @param style
-     * @param statusTextElement
-     * @param statusModalElement
+     * @param useDefaultCloseButton
      */
-    public static show <Text extends HTMLElement = HTMLElement, Modal extends HTMLElement = HTMLElement> (
+    public static show (
         message: any,
+        header = 'New Message!',
         isError = false,
         timeout?: number,
-        style?: { successClass?: string, errorClass?: string },
-        statusTextElement: JQuery<Text> = StatusModal._text,
-        statusModalElement: JQuery<Modal> = StatusModal._element
+        style?: Partial<{
+            successClass: string;
+            errorClass: string
+        }>,
+        useDefaultCloseButton = true
     ) {
-        [statusTextElement, statusModalElement] = StatusModal._construct(statusTextElement, statusModalElement);
-
-        if (!isError) {
-            statusTextElement.addClass(style?.successClass || 'alert-success');
-            statusTextElement.removeClass(style?.errorClass || 'alert-danger');
-        } else {
-            statusTextElement.removeClass(style?.successClass || 'alert-success');
-            statusTextElement.addClass(style?.errorClass || 'alert-danger');
-        }
-
         if (message.data && message.data.message) {
             message = message.data.message;
         } else if (message.message) {
             message = message.message;
         }
 
-        let finalMessage = message.toString();
+        let final_message = message.toString();
 
         // Web3 helpers
         // eslint-disable-next-line no-lone-blocks
         {
-            if (finalMessage.toLowerCase().includes('while formatting outputs') ||
-                finalMessage.toLowerCase().includes('internal error') ||
-                finalMessage.toLowerCase().includes('header not found')) {
-                finalMessage = 'Internal wallet error, please try again.';
+            const lower = final_message.toLowerCase();
+
+            if (lower.includes('while formatting outputs') ||
+                lower.includes('internal error') ||
+                lower.includes('header not found')) {
+                final_message = 'Internal wallet error, please try again.';
             }
 
-            finalMessage = finalMessage.replace('execution reverted:', '').trim();
+            final_message = final_message.replace('execution reverted:', '').trim();
         }
 
-        statusTextElement.text(finalMessage);
+        const body = UIHelper.createElement('div')
+            .addClass('alert')
+            .text(final_message);
 
-        if (finalMessage.length !== 0) {
-            console.info(finalMessage);
-            $.noConflict();
-            statusModalElement.modal('show');
+        const title = UIHelper.createElement('span')
+            .addClass('alert')
+            .text(header);
 
-            if (timeout) {
-                setTimeout(() => statusModalElement.modal('hide'), timeout);
-            }
-        }
-    }
-
-    /**
-     * Constructs the necessary elements if they do not exist
-     *
-     * @param statusTextElement
-     * @param statusModalElement
-     * @protected
-     */
-    protected static _construct <Text extends HTMLElement = HTMLElement, Modal extends HTMLElement = HTMLElement> (
-        statusTextElement: JQuery<Text> = StatusModal._text,
-        statusModalElement: JQuery<Modal> = StatusModal._element
-    ): [JQuery<Text>, JQuery<Modal>] {
-        if (!statusTextElement.length || !statusModalElement.length) {
-            statusModalElement = createElement<Modal>('div')
-                .addClass('modal')
-                .addClass('fade')
-                .attr('tabindex', '-1')
-                .attr('role', 'dialog')
-                .attr('arial-labelledby', 'statusModal')
-                .attr('aria-hidden', 'true')
-                .attr('id', 'statusModal');
-
-            {
-                const document = createElement('div')
-                    .addClass('modal-dialog')
-                    .addClass('modal-lg')
-                    .addClass('modal-dialog-centered')
-                    .attr('role', 'document');
-
-                {
-                    const content = createElement('div')
-                        .addClass('modal-content');
-
-                    {
-                        const title = createElement('div')
-                            .addClass('modal-header')
-                            .addClass('bg-dark')
-                            .addClass('text-light');
-
-                        const titleText = createElement('h5')
-                            .addClass('modal-title')
-                            .text('Alert!');
-                        titleText.appendTo(title);
-                        title.appendTo(content);
-                    }
-
-                    {
-                        const body = createElement('div')
-                            .addClass('modal-body');
-
-                        statusTextElement = createElement<Text>('p')
-                            .attr('id', 'statusText')
-                            .css('font-size', '12px')
-                            .addClass('alert');
-                        statusTextElement.appendTo(body);
-                        body.appendTo(content);
-                    }
-
-                    content.appendTo(document);
-                }
-
-                document.appendTo(statusModalElement);
-            }
-
-            statusModalElement.appendTo($(document.body));
+        if (isError) {
+            title.addClass(style?.errorClass || 'text-danger');
+        } else {
+            title.addClass(style?.successClass || 'text-success');
         }
 
-        return [statusTextElement, statusModalElement];
+        console.log(final_message);
+
+        ModalHelper.open({
+            body,
+            title,
+            timeout,
+            useDefaultCloseButton
+        });
     }
 }
 

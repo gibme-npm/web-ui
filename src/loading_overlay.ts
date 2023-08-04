@@ -82,7 +82,7 @@ export default abstract class LoadingOverlay {
      * @param options
      * @param target
      */
-    public static hide <Type extends HTMLElement = HTMLElement> (
+    public static hide<Type extends HTMLElement = HTMLElement> (
         options: Partial<LoadingOverlayOptions> = {},
         target: JQuery<Type> = $(document.body) as any
     ) {
@@ -101,7 +101,7 @@ export default abstract class LoadingOverlay {
      * @param options
      * @param target
      */
-    public static progress <Type extends HTMLElement = HTMLElement> (
+    public static progress<Type extends HTMLElement = HTMLElement> (
         options: Partial<LoadingOverlayOptions> = {},
         target: JQuery<Type> = $(document.body) as any
     ) {
@@ -120,7 +120,7 @@ export default abstract class LoadingOverlay {
      * @param options
      * @param target
      */
-    public static resize <Type extends HTMLElement = HTMLElement> (
+    public static resize<Type extends HTMLElement = HTMLElement> (
         options: Partial<LoadingOverlayOptions> = {},
         target: JQuery<Type> = $(document.body) as any
     ) {
@@ -140,7 +140,7 @@ export default abstract class LoadingOverlay {
      * @param options
      * @param target
      */
-    public static show <Type extends HTMLElement = HTMLElement> (
+    public static show<Type extends HTMLElement = HTMLElement> (
         text?: string,
         options: Partial<LoadingOverlayOptions & { timeout: number }> = {},
         target: JQuery<Type> = $(document.body) as any
@@ -165,7 +165,7 @@ export default abstract class LoadingOverlay {
      * @param text
      * @param target
      */
-    public static text <Type extends HTMLElement = HTMLElement> (
+    public static text<Type extends HTMLElement = HTMLElement> (
         text: string,
         target: JQuery<Type> = $(document.body) as any
     ) {

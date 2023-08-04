@@ -21,30 +21,19 @@
 import $ from 'jquery';
 import './bootstrap5';
 import './fontawesome';
-import { DataTableConfig, DataTable } from './datatables';
-import fetch, { Headers, Request, Response } from '@gibme/fetch';
+import { DataTable, DataTableConfig } from './datatables';
+import fetch, { Cookie, CookieJar, Headers, Request, Response } from '@gibme/fetch';
 import LoadingOverlay, { LoadingOverlayOptions } from './loading_overlay';
 import LocalStorage from '@gibme/local-storage';
 import numeral from 'numeral';
+import ModalHelper from './modal_helper';
 import StatusModal from './status_modal';
 import Timer from '@gibme/timer';
 import moment from 'moment';
 import HLS, { HlsConfig as HLSConfig } from 'hls.js';
 import GoogleChartsLoader, { ChartOptions } from './google_charts';
-import GoogleMapsLoader, { USACentered, MapOptions } from './google_maps';
-
-/**
- * Video element creation options
- */
-export interface VideoElementOptions {
-    autoplay: boolean;
-    controls: boolean;
-    loop: boolean;
-    muted: boolean;
-    playsinline: boolean;
-
-    [key: string]: boolean;
-}
+import GoogleMapsLoader, { MapOptions, USACentered } from './google_maps';
+import UIHelper, { VideoElementOptions } from './ui_helper';
 
 export {
     $,
@@ -67,108 +56,16 @@ export {
     HLS,
     HLSConfig,
     DataTableConfig,
-    DataTable
+    DataTable,
+    ModalHelper,
+    VideoElementOptions,
+    UIHelper,
+    Cookie,
+    CookieJar
 };
 
-export class UIHelper {
-    /**
-     * Creates a new DataTable
-     *
-     * @param id
-     * @param options
-     */
-    public static createDataTable (
-        id: string | JQuery<HTMLElement>,
-        options?: DataTableConfig
-    ) {
-        return ((typeof id === 'string') ? $(`#${id}`) : id).DataTable(options);
-    }
-
-    /**
-     * Creates a new JQuery HTML Element of the specified type
-     *
-     * @param type
-     */
-    public static createElement <Type extends HTMLElement = HTMLElement> (
-        type: string
-    ): JQuery<Type> {
-        return $(document.createElement(type)) as any;
-    }
-
-    /**
-     * Creates a new JQuery HTML Media Element with the properties set as defined in the options
-     * It loads a hls.js player around the element so that it can load that content
-     *
-     * Note: if autoplay is enabled, muted will be set to true
-     *
-     * @param src
-     * @param options
-     * @param hlsConfig
-     */
-    public static createHLSMediaElement (
-        src: string,
-        options: Partial<VideoElementOptions> = {},
-        hlsConfig: Partial<HLSConfig> = {}
-    ): [JQuery<HTMLMediaElement>, HLS] {
-        const hls = new HLS(hlsConfig);
-
-        const element = createMediaElement(undefined, options);
-
-        hls.loadSource(src);
-        hls.attachMedia(element[0]);
-
-        if (options.autoplay) {
-            hls.on(HLS.Events.MEDIA_ATTACHED, () => {
-                element.trigger('play');
-            });
-        }
-
-        return [element, hls];
-    }
-
-    /**
-     * Creates a new JQuery HTML Media Element with the properties set as defined in the options
-     *
-     * Note: if autoplay is enabled, muted will be set to true
-     *
-     * @param src
-     * @param options
-     */
-    public static createMediaElement (
-        src?: string,
-        options:Partial<VideoElementOptions> = {}
-    ): JQuery<HTMLMediaElement> {
-        if (options.autoplay) {
-            options.muted = true;
-        }
-
-        const element = createElement<HTMLMediaElement>('video')
-            .prop({
-                src,
-                ...options
-            });
-
-        for (const key of Object.keys(options)) {
-            if (options[key] === true) {
-                element.attr(key, '');
-            }
-        }
-
-        return element;
-    }
-
-    /**
-     * Fetches the HTML DOM Object by the id or from a JQuery HTML Element
-     *
-     * @param id
-     */
-    public static fetchElement<Type extends HTMLElement = HTMLElement> (
-        id: string | JQuery<HTMLElement>
-    ): Type {
-        return (typeof id === 'string' ? $(`#${id}`)[0] : id[0]) as any;
-    }
-}
-
+export const clearElement = UIHelper.clearElement;
+export const createAwesomeButton = UIHelper.createAwesomeButton;
 export const createDataTable = UIHelper.createDataTable;
 export const createElement = UIHelper.createElement;
 export const createHLSMediaElement = UIHelper.createHLSMediaElement;
@@ -193,6 +90,8 @@ export default {
     moment,
     StatusModal,
     Timer,
+    createAwesomeButton,
+    clearElement,
     createElement,
     fetchElement,
     createHLSMediaElement,
@@ -203,5 +102,9 @@ export default {
     GoogleMapsLoader,
     USACentered,
     HLS,
-    DataTable
+    DataTable,
+    ModalHelper,
+    UIHelper,
+    Cookie,
+    CookieJar
 };

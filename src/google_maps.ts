@@ -56,7 +56,7 @@ export interface MapOptions extends google.maps.MapOptions {
  * @param options https://developers.google.com/maps/documentation/javascript/overview#MapOptions
  * @constructor
  */
-export const GoogleMapsLoader = async <Type extends HTMLElement = HTMLElement> (
+export const GoogleMapsLoader = async <Type extends HTMLElement = HTMLElement>(
     API_KEY: string,
     element: string | JQuery<Type> = $(document.body) as any,
     options: Partial<MapOptions> = USACentered

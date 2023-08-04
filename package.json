@@ -1,6 +1,6 @@
 {
   "name": "@gibme/web-ui",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A simple web-ui helper",
   "main": "./dist/web-ui.js",
   "types": "./dist/web-ui.d.ts",
@@ -104,6 +104,7 @@
     "@types/google.visualization": "^0.0.69",
     "@types/jquery": "^3.5.16",
     "@types/numeral": "^2.0.2",
+    "@types/uuid": "^9.0.2",
     "bootstrap": "^5.3.1",
     "datatables.net-autofill-bs5": "^2.6.0",
     "datatables.net-bs5": "^1.13.6",
@@ -125,6 +126,7 @@
     "hls.js": "^1.4.10",
     "jquery": "^3.7.0",
     "moment": "^2.29.4",
-    "numeral": "^2.0.6"
+    "numeral": "^2.0.6",
+    "uuid": "^9.0.0"
   }
 }
