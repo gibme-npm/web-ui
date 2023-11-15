@@ -39,7 +39,7 @@ export const GoogleChartsLoader = async (
 ): Promise<void> => {
     return new Promise(resolve => {
         $.getScript('https://www.gstatic.com/charts/loader.js', () => {
-            options.version ||= 'current';
+            options.version ??= 'current';
 
             google.charts.load(options.version, { packages });
             google.charts.setOnLoadCallback(() => {

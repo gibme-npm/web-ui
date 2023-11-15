@@ -62,10 +62,10 @@ export const GoogleMapsLoader = async <Type extends HTMLElement = HTMLElement>(
     options: Partial<MapOptions> = USACentered
 ): Promise<google.maps.Map> => {
     return new Promise(resolve => {
-        options.language ||= 'en';
-        options.libraries ||= [];
-        options.version ||= 'weekly';
-        options.center ||= USACentered.center;
+        options.language ??= 'en';
+        options.libraries ??= [];
+        options.version ??= 'weekly';
+        options.center ??= USACentered.center;
         options.zoom ??= USACentered.zoom;
 
         window.WebUIInitializeMap = () => {

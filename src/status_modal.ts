@@ -79,8 +79,6 @@ export default abstract class StatusModal extends ModalHelper {
             title.addClass(style?.successClass || 'text-success');
         }
 
-        console.log(final_message);
-
         ModalHelper.open({
             body,
             title,

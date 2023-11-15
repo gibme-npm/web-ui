@@ -21,6 +21,7 @@
 import $ from 'jquery';
 import { DataTableConfig } from './datatables';
 import HLS, { HlsConfig as HLSConfig } from 'hls.js';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Video element creation options
@@ -33,6 +34,76 @@ export interface VideoElementOptions {
     playsinline: boolean;
 
     [key: string]: boolean;
+}
+
+/**
+ * Font Awesome options namespace
+ */
+export namespace FontAwesome {
+    /**
+     * Defines the Font Awesome style
+     */
+    export type Style = 'solid' | 'regular' | 'light' | 'duotone' | 'thin';
+    /**
+     * Defines the Font Awesome animation
+     */
+    export type Animation = 'none' | 'beat' | 'beat-fade' | 'bounce' | 'fade'
+        | 'flip' | 'shake' | 'spin' | 'spin-reverse' | 'spin-pulse';
+    /**
+     * Defines the Font Awesome rotation
+     *
+     * Note: does not work if an animation is specified
+     */
+    export type Rotation = 'none' | 'rotate-90' | 'rotate-180' |'rotate-270'
+        | 'flip-horizontal' | 'flip-vertical' | 'flip-both';
+    /**
+     * Defines the Font Awesome icon size
+     */
+    export type Size = 'default' | '2xs' | 'xs' | 'lg' | 'xl' | '2xl';
+}
+
+/**
+ * Font Awesome Option set
+ */
+export interface FontAwesomeOptions {
+    class: string;
+    style: FontAwesome.Style;
+    animation: FontAwesome.Animation;
+    rotation: FontAwesome.Rotation;
+    size: FontAwesome.Size;
+    color: `#${string}`;
+}
+
+/**
+ * Font Awesome Button Options set
+ */
+export interface FontAwesomeButtonOptions extends FontAwesomeOptions {
+    label: string | JQuery<HTMLElement>;
+}
+
+/**
+ * HTML Input namespace
+ */
+export namespace HTMLInput {
+    /**
+     * Defines the HTML Input type
+     */
+    export type Type = 'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file'
+    |'hidden' | 'image' | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search'
+| 'submit' | 'tel' | 'text' |'time' | 'url' | 'week'
+}
+
+/**
+ * HTML Input Option Set
+ */
+export interface HTMLInputOptions {
+    type: HTMLInput.Type;
+    class: string;
+    id: string;
+    label: string | JQuery<HTMLElement>
+    input: JQuery<HTMLElement>
+
+    [key: string]: string | number | JQuery<HTMLElement>;
 }
 
 export default abstract class UIHelper {
@@ -58,27 +129,110 @@ export default abstract class UIHelper {
     /**
      * Creates a font awesome button
      *
-     * @param className
+     * Note: This method supports legacy button creation via specifying the full FontAwesome icon path in the
+     * icon argument and an Array of attributes for the button. It also supports the new style icon creation
+     * such as that found in `createAwesomeIcon`. Support for the legacy method will be removed in a future
+     * release.
+     *
+     * @param icon
+     * @param attributesOrOptions
      * @param attributes
      */
     public static createAwesomeButton (
-        className: string,
-        attributes: Map<string, string> = new Map<string, string>()
+        icon: string | string[],
+        attributesOrOptions: string[][] | Partial<FontAwesomeButtonOptions> = [],
+        attributes: string[][] = []
     ): JQuery<HTMLElement> {
+        if (Array.isArray(icon)) {
+            icon = icon.join(' ');
+        }
+
         const button = UIHelper.createElement('button')
             .addClass('btn')
             .attr('type', 'button');
 
-        const icon = UIHelper.createElement('i')
-            .addClass(className);
+        if (Array.isArray(attributesOrOptions)) {
+            const element = UIHelper.createElement('i')
+                .addClass(icon);
 
-        for (const [key, value] of attributes) {
-            icon.attr(key, value);
+            for (const [key, value] of attributesOrOptions) {
+                element.attr(key, value);
+            }
+
+            element.appendTo(button);
+        } else {
+            const element = UIHelper.createAwesomeIcon(icon, attributesOrOptions);
+
+            for (const [key, value] of attributes) {
+                element.attr(key, value);
+            }
+
+            element.appendTo(button);
+
+            if (attributesOrOptions.label && typeof attributesOrOptions.label === 'string') {
+                UIHelper.createElement('span')
+                    .text(` ${attributesOrOptions.label}`)
+                    .appendTo(button);
+            } else if (attributesOrOptions.label && typeof attributesOrOptions.label !== 'string') {
+                attributesOrOptions.label.appendTo(button);
+            }
         }
 
-        icon.appendTo(button);
-
         return button;
+    }
+
+    /**
+     * Creates a Font Awesome Icon
+     *
+     * Note: The icon name must be specified without the `fa-` prefix. If the icon includes
+     * multiple names (i.e. `fa-brand fa-x-twitter`) the icon should be specified as either
+     * `brand x-twitter` or `['brand','x-twitter']`
+     *
+     * @param icon
+     * @param options
+     */
+    public static createAwesomeIcon (
+        icon: string | string[],
+        options: Partial<FontAwesomeOptions> = {}
+    ): JQuery<HTMLElement> {
+        options.style ??= 'solid';
+        options.animation ??= 'none';
+        options.rotation ??= 'none';
+        options.size ??= 'default';
+
+        if (Array.isArray(icon)) {
+            icon = icon.join(' ');
+        }
+
+        // rework the icon in case of multiple specifiers
+        icon = icon.split(' ')
+            .map(elem => `fa-${elem}`)
+            .join(' ');
+
+        const element = UIHelper.createElement('i')
+            .addClass(`fa-${options.style} ${icon}`);
+
+        if (options.animation !== 'none') {
+            element.addClass(`fa-${options.animation}`);
+        }
+
+        if (options.rotation !== 'none' && options.animation === 'none') {
+            element.addClass(`fa-${options.rotation}`);
+        }
+
+        if (options.color) {
+            element.attr('style', `color: ${options.color};`);
+        }
+
+        if (options.size !== 'default') {
+            element.addClass(`fa-${options.size}`);
+        }
+
+        if (options.class) {
+            element.addClass(options.class);
+        }
+
+        return element;
     }
 
     /**
@@ -103,6 +257,86 @@ export default abstract class UIHelper {
         type: string
     ): JQuery<Type> {
         return $(document.createElement(type)) as any;
+    }
+
+    /**
+     * Creates a form floating input group with a label
+     *
+     * @param options
+     */
+    public static createFloatingInputGroup (
+        options: Partial<HTMLInputOptions> = {}
+    ): JQuery<HTMLElement> {
+        options.type ??= 'text';
+
+        const id = options.id || options.input?.attr('id') || uuid();
+
+        const float = UIHelper.createElement('div')
+            .addClass('form-floating input-group');
+
+        const label = UIHelper.createElement('label');
+
+        if (options.label) {
+            if (typeof options.label === 'string') {
+                label.text(options.label);
+            } else {
+                options.label.appendTo(label);
+            }
+        }
+
+        if (id) {
+            label.attr('for', id);
+
+            if (options.type === 'file') {
+                float.removeClass('form-floating input-group');
+
+                label.addClass('form-label')
+                    .appendTo(float);
+            }
+        }
+
+        if (!options.input) {
+            const element = UIHelper.createElement('input')
+                .attr('type', options.type);
+
+            if (id) {
+                element.attr('id', id);
+            }
+
+            if (options.class) {
+                element.addClass(options.class);
+            }
+
+            for (const key of Object.keys(options)) {
+                if (key === 'id' || key === 'label' || key === 'class') {
+                    continue;
+                }
+
+                const value = options[key];
+
+                if (typeof value === 'string' || typeof value === 'number') {
+                    element.attr(key, value.toString());
+                } else if (value) {
+                    value.appendTo(element);
+                }
+            }
+
+            element.addClass('form-control')
+                .appendTo(float);
+        } else {
+            if (id) {
+                options.input.attr('id', id);
+            }
+
+            options.input.addClass('form-control')
+                .appendTo(float);
+        }
+
+        if (label.attr('for') && options.type !== 'file') {
+            label.appendTo(float);
+        }
+
+        return float;
     }
 
     /**
@@ -176,6 +410,19 @@ export default abstract class UIHelper {
         id: string | JQuery<HTMLElement>
     ): Type {
         return (typeof id === 'string' ? $(`#${id}`)[0] : id[0]) as any;
+    }
+
+    /**
+     * Retrieve the full HTML for the specified element including the element itself
+     *
+     * @param element
+     */
+    public static fetchHTML<Type extends HTMLElement = HTMLElement> (
+        element: JQuery<Type>
+    ): string | undefined {
+        return UIHelper.createElement('div')
+            .append(element.clone())
+            .html();
     }
 }
 

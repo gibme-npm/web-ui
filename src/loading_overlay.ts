@@ -76,6 +76,8 @@ export interface LoadingOverlayOptions {
  * Overlay display helper
  */
 export default abstract class LoadingOverlay {
+    public static readonly zIndex = 2147483646;
+
     /**
      * Hides the displayed overlay
      *
@@ -86,7 +88,7 @@ export default abstract class LoadingOverlay {
         options: Partial<LoadingOverlayOptions> = {},
         target: JQuery<Type> = $(document.body) as any
     ) {
-        options.zIndex ||= 2147483646;
+        options.zIndex ??= LoadingOverlay.zIndex;
 
         if (options.zIndex === Number.MAX_SAFE_INTEGER) {
             options.zIndex = Number.MAX_SAFE_INTEGER - 1;
@@ -105,7 +107,7 @@ export default abstract class LoadingOverlay {
         options: Partial<LoadingOverlayOptions> = {},
         target: JQuery<Type> = $(document.body) as any
     ) {
-        options.zIndex ||= 2147483646;
+        options.zIndex ??= LoadingOverlay.zIndex;
 
         if (options.zIndex === Number.MAX_SAFE_INTEGER) {
             options.zIndex = Number.MAX_SAFE_INTEGER - 1;
@@ -124,7 +126,7 @@ export default abstract class LoadingOverlay {
         options: Partial<LoadingOverlayOptions> = {},
         target: JQuery<Type> = $(document.body) as any
     ) {
-        options.zIndex ||= 2147483646;
+        options.zIndex ??= LoadingOverlay.zIndex;
 
         if (options.zIndex === Number.MAX_SAFE_INTEGER) {
             options.zIndex = Number.MAX_SAFE_INTEGER - 1;
@@ -146,7 +148,7 @@ export default abstract class LoadingOverlay {
         target: JQuery<Type> = $(document.body) as any
     ) {
         options.text = text;
-        options.zIndex ||= 2147483646;
+        options.zIndex ??= LoadingOverlay.zIndex;
 
         if (options.zIndex === Number.MAX_SAFE_INTEGER) {
             options.zIndex = Number.MAX_SAFE_INTEGER - 1;

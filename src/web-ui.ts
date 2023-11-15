@@ -33,7 +33,14 @@ import moment from 'moment';
 import HLS, { HlsConfig as HLSConfig } from 'hls.js';
 import GoogleChartsLoader, { ChartOptions } from './google_charts';
 import GoogleMapsLoader, { MapOptions, USACentered } from './google_maps';
-import UIHelper, { VideoElementOptions } from './ui_helper';
+import UIHelper, {
+    VideoElementOptions,
+    FontAwesomeOptions,
+    FontAwesome,
+    HTMLInputOptions,
+    HTMLInput
+} from './ui_helper';
+import { v4 as UUID } from 'uuid';
 
 export {
     $,
@@ -61,16 +68,24 @@ export {
     VideoElementOptions,
     UIHelper,
     Cookie,
-    CookieJar
+    CookieJar,
+    FontAwesome,
+    FontAwesomeOptions,
+    HTMLInput,
+    HTMLInputOptions,
+    UUID
 };
 
 export const clearElement = UIHelper.clearElement;
+export const createAwesomeIcon = UIHelper.createAwesomeIcon;
 export const createAwesomeButton = UIHelper.createAwesomeButton;
 export const createDataTable = UIHelper.createDataTable;
 export const createElement = UIHelper.createElement;
+export const createFloatingInputGroup = UIHelper.createFloatingInputGroup;
 export const createHLSMediaElement = UIHelper.createHLSMediaElement;
 export const createMediaElement = UIHelper.createMediaElement;
 export const fetchElement = UIHelper.fetchElement;
+export const fetchHTML = UIHelper.fetchHTML;
 
 /**
  * Sleeps for the specified timeout period
@@ -94,6 +109,8 @@ export default {
     clearElement,
     createElement,
     fetchElement,
+    createFloatingInputGroup,
+    createAwesomeIcon,
     createHLSMediaElement,
     createMediaElement,
     createDataTable,
@@ -106,5 +123,7 @@ export default {
     ModalHelper,
     UIHelper,
     Cookie,
-    CookieJar
+    CookieJar,
+    fetchHTML,
+    UUID
 };
