@@ -102,8 +102,10 @@ export interface HTMLInputOptions {
     id: string;
     label: string | JQuery<HTMLElement>
     input: JQuery<HTMLElement>
+    readonly: boolean;
+    disabled: boolean;
 
-    [key: string]: string | number | JQuery<HTMLElement>;
+    [key: string]: string | number | JQuery<HTMLElement> | boolean | undefined;
 }
 
 export default abstract class UIHelper {
@@ -156,7 +158,9 @@ export default abstract class UIHelper {
                 .addClass(icon);
 
             for (const [key, value] of attributesOrOptions) {
-                element.attr(key, value);
+                if (value && value.trim().length !== 0) {
+                    element.attr(key, value.trim());
+                }
             }
 
             element.appendTo(button);
@@ -164,7 +168,9 @@ export default abstract class UIHelper {
             const element = UIHelper.createAwesomeIcon(icon, attributesOrOptions);
 
             for (const [key, value] of attributes) {
-                element.attr(key, value);
+                if (value && value.trim().length !== 0) {
+                    element.attr(key, value.trim());
+                }
             }
 
             element.appendTo(button);
@@ -268,6 +274,8 @@ export default abstract class UIHelper {
         options: Partial<HTMLInputOptions> = {}
     ): JQuery<HTMLElement> {
         options.type ??= 'text';
+        options.readonly ??= false;
+        options.disabled ??= false;
 
         const id = options.id || options.input?.attr('id') || uuid();
 
@@ -307,15 +315,27 @@ export default abstract class UIHelper {
                 element.addClass(options.class);
             }
 
+            if (options.readonly) {
+                element.attr('readonly', 'readonly');
+            }
+
+            if (options.disabled) {
+                element.attr('disabled', 'disabled');
+            }
+
             for (const key of Object.keys(options)) {
-                if (key === 'id' || key === 'label' || key === 'class') {
+                if (key === 'id' || key === 'label' || key === 'class' || key === 'readonly' || key === 'disabled') {
                     continue;
                 }
 
                 const value = options[key];
 
-                if (typeof value === 'string' || typeof value === 'number') {
-                    element.attr(key, value.toString());
+                if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+                    const _value = value.toString().trim();
+
+                    if (_value && _value.length !== 0) {
+                        element.attr(key, _value);
+                    }
                 } else if (value) {
                     value.appendTo(element);
                 }
