@@ -267,6 +267,17 @@ export default abstract class ModalHelper {
     }
 
     /**
+     * Allows for selecting an element within the modal itself
+     *
+     * @param selector
+     */
+    public static select<Type extends HTMLElement = HTMLElement> (
+        selector: JQuery.Selector
+    ): JQuery<Type> {
+        return $(`#${ModalHelper.modal_selector} ${selector}`);
+    }
+
+    /**
      * Constructs a new instance of the modal within the document
      *
      * @private

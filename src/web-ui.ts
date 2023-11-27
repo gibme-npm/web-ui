@@ -21,7 +21,7 @@
 import $ from 'jquery';
 import './bootstrap5';
 import './fontawesome';
-import { DataTable, DataTableConfig } from './datatables';
+import { DataTable, DataTableConfig, DataTablesAPI } from './datatables';
 import fetch, { Cookie, CookieJar, Headers, Request, Response } from '@gibme/fetch';
 import LoadingOverlay, { LoadingOverlayOptions } from './loading_overlay';
 import LocalStorage from '@gibme/local-storage';
@@ -63,6 +63,7 @@ export {
     HLS,
     HLSConfig,
     DataTableConfig,
+    DataTablesAPI,
     DataTable,
     ModalHelper,
     VideoElementOptions,

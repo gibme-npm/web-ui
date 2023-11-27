@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import DataTable, { Config as DataTableConfig } from 'datatables.net-bs5';
+import DataTable, { Config as DataTableConfig, Api as DataTablesAPI } from 'datatables.net-bs5';
 import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
 
 import 'datatables.net-autofill-bs5';
@@ -67,4 +67,4 @@ import 'datatables.net-searchpanes-bs5/css/searchPanes.bootstrap5.min.css';
 import 'datatables.net-staterestore-bs5';
 import 'datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css';
 
-export { DataTable, DataTableConfig };
+export { DataTable, DataTableConfig, DataTablesAPI };

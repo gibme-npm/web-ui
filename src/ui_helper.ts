@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import $ from 'jquery';
-import { DataTableConfig } from './datatables';
+import { DataTableConfig, DataTablesAPI } from './datatables';
 import HLS, { HlsConfig as HLSConfig } from 'hls.js';
 import { v4 as uuid } from 'uuid';
 
@@ -247,10 +247,14 @@ export default abstract class UIHelper {
      * @param id
      * @param options
      */
-    public static createDataTable (
+    public static createDataTable<Type = any> (
         id: string | JQuery<HTMLElement>,
         options?: DataTableConfig
-    ) {
+    ): DataTablesAPI<Type> {
+        if (typeof id === 'string' && !id.startsWith('#')) {
+            id = `#${id}`;
+        }
+
         return ((typeof id === 'string') ? $(`#${id}`) : id).DataTable(options);
     }
 
@@ -443,6 +447,33 @@ export default abstract class UIHelper {
         return UIHelper.createElement('div')
             .append(element.clone())
             .html();
+    }
+
+    /**
+     * Returns the full selector path of the supplied element
+     *
+     * @param element
+     * @param type
+     */
+    public static fetchSelectorPath <Type extends HTMLElement = HTMLElement> (
+        element: JQuery<Type>,
+        type: 'id' | 'tagName'
+    ): string {
+        const ids: string[] = [];
+
+        do {
+            const id = element.prop(type);
+
+            if (id) {
+                ids.push(id);
+            }
+
+            element = element.parent();
+        } while (typeof element.prop('tagName') !== 'undefined');
+
+        return ids.reverse()
+            .map(elem => `${type === 'id' ? '#' : ''}${elem}`)
+            .join(type === 'id' ? ' ' : ' > ');
     }
 }
 
