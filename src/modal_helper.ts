@@ -61,6 +61,8 @@ export interface ModalOpenOptions<
     [key: string]: any;
 }
 
+export type ModalEvent = 'show' | 'shown' | 'hide' | 'hidden' | 'hidePrevented';
+
 export default abstract class ModalHelper {
     private static readonly id = uuid();
     public static readonly modal_selector = `${ModalHelper.id}`;
@@ -69,6 +71,36 @@ export default abstract class ModalHelper {
     public static readonly modal_close_button_selector = `${ModalHelper.id}-close-button`;
     public static readonly modal_body_selector = `${ModalHelper.id}-body`;
     public static readonly modal_footer_selector = `${ModalHelper.id}-footer`;
+
+    /**
+     * Adds an event listener to the modal
+     *
+     * @param event
+     * @param listener
+     */
+    public static on (event: ModalEvent, listener: (...args: any[]) => void) {
+        $(`#${ModalHelper.modal_selector}`).on(`${event}.bs.modal`, listener);
+    }
+
+    /**
+     * Removes an event listener form the modal
+     *
+     * @param event
+     * @param listener
+     */
+    public static off (event: ModalEvent, listener: (...args: any[]) => void) {
+        $(`#${ModalHelper.modal_selector}`).off(`${event}.bs.modal`, listener);
+    }
+
+    /**
+     * Adds a one-time event listener to the modal
+     *
+     * @param event
+     * @param listener
+     */
+    public static once (event: ModalEvent, listener: (...args: any[]) => void) {
+        $(`#${ModalHelper.modal_selector}`).one(`${event}.bs.modal`, listener);
+    }
 
     /**
      * Returns the modal element
