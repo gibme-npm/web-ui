@@ -23,22 +23,22 @@ import './bootstrap5';
 import './fontawesome';
 import { DataTable, DataTableConfig, DataTablesAPI } from './datatables';
 import fetch, { Cookie, CookieJar, Headers, Request, Response } from '@gibme/fetch';
-import LoadingOverlay, { LoadingOverlayOptions } from './loading_overlay';
+import LoadingOverlay, { LoadingOverlayEvent, LoadingOverlayOptions } from './loading_overlay';
 import LocalStorage from '@gibme/local-storage';
 import numeral from 'numeral';
 import ModalHelper from './modal_helper';
-import StatusModal from './status_modal';
+import StatusModal, { StatusModalOptions } from './status_modal';
 import Timer from '@gibme/timer';
 import moment from 'moment';
 import HLS, { HlsConfig as HLSConfig } from 'hls.js';
 import GoogleChartsLoader, { ChartOptions } from './google_charts';
 import GoogleMapsLoader, { MapOptions, USACentered } from './google_maps';
 import UIHelper, {
-    VideoElementOptions,
-    FontAwesomeOptions,
     FontAwesome,
+    FontAwesomeOptions,
+    HTMLInput,
     HTMLInputOptions,
-    HTMLInput
+    VideoElementOptions
 } from './ui_helper';
 import { v4 as UUID } from 'uuid';
 
@@ -74,7 +74,9 @@ export {
     FontAwesomeOptions,
     HTMLInput,
     HTMLInputOptions,
-    UUID
+    UUID,
+    StatusModalOptions,
+    LoadingOverlayEvent
 };
 
 export const clearElement = UIHelper.clearElement;
@@ -87,6 +89,7 @@ export const createHLSMediaElement = UIHelper.createHLSMediaElement;
 export const createMediaElement = UIHelper.createMediaElement;
 export const fetchElement = UIHelper.fetchElement;
 export const fetchHTML = UIHelper.fetchHTML;
+export const fetchSelectorPath = UIHelper.fetchSelectorPath;
 
 /**
  * Sleeps for the specified timeout period
@@ -126,5 +129,6 @@ export default {
     Cookie,
     CookieJar,
     fetchHTML,
-    UUID
+    UUID,
+    fetchSelectorPath
 };
