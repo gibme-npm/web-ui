@@ -20,6 +20,7 @@
 
 import $ from 'jquery';
 import 'gasparesganga-jquery-loading-overlay';
+import EventEmitter from 'events';
 
 /**
  * Represents Loading Overlay options
@@ -73,10 +74,54 @@ export interface LoadingOverlayOptions {
 }
 
 /**
+ * Loading Overlay events
+ */
+export type LoadingOverlayEvent = 'shown' | 'hidden';
+
+/**
  * Overlay display helper
  */
 export default abstract class LoadingOverlay {
     public static readonly zIndex = 2147483646;
+    private static _open = false;
+    private static _events = new EventEmitter();
+
+    /**
+     * Returns if the overlay is open
+     */
+    public static get isOpen (): boolean {
+        return this._open;
+    }
+
+    /**
+     * Adds an event listener to the loading overlay
+     *
+     * @param event
+     * @param listener
+     */
+    public static on (event: LoadingOverlayEvent, listener: (...args: any[]) => void) {
+        this._events.on(event, listener);
+    }
+
+    /**
+     * Removes an event listener from the loading overlay
+     *
+     * @param event
+     * @param listener
+     */
+    public static off (event: LoadingOverlayEvent, listener: (...args: any[]) => void) {
+        this._events.off(event, listener);
+    }
+
+    /**
+     * Adds a one-time event listener to the loading overlay
+     *
+     * @param event
+     * @param listener
+     */
+    public static once (event: LoadingOverlayEvent, listener: (...args: any[]) => void) {
+        this._events.once(event, listener);
+    }
 
     /**
      * Hides the displayed overlay
@@ -95,6 +140,10 @@ export default abstract class LoadingOverlay {
         }
 
         target.LoadingOverlay('hide', options);
+
+        this._open = true;
+
+        this._events.emit('hidden');
     }
 
     /**
@@ -155,6 +204,10 @@ export default abstract class LoadingOverlay {
         }
 
         target.LoadingOverlay('show', options);
+
+        this._open = true;
+
+        this._events.emit('shown');
 
         if (options.timeout) {
             setTimeout(() => LoadingOverlay.hide(options, target), options.timeout);
