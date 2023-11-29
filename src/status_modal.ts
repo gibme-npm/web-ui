@@ -21,35 +21,50 @@
 import ModalHelper from './modal_helper';
 import UIHelper from './ui_helper';
 
+/**
+ * Describes status modal options
+ */
+export interface StatusModalOptions {
+    /**
+     * The message to display
+     */
+    message: any;
+    /**
+     * The title to use for the status modal
+     */
+    title: string;
+    /**
+     * A timeout wherein the modal will auto hide
+     */
+    timeout: number;
+    /**
+     * The class to apply to the title
+     */
+    class: string;
+    /**
+     * Whether we display the default close button in the upper right of the modal
+     */
+    useDefaultCloseButton: boolean;
+}
+
 export default abstract class StatusModal extends ModalHelper {
     /**
      * Displays a modal with jquery using the supplied elements, message, and style
      *
-     * @param message
-     * @param header
-     * @param isError
-     * @param timeout
-     * @param style
-     * @param useDefaultCloseButton
+     * @param options
      */
     public static show (
-        message: any,
-        header = 'New Message!',
-        isError = false,
-        timeout?: number,
-        style?: Partial<{
-            successClass: string;
-            errorClass: string
-        }>,
-        useDefaultCloseButton = true
+        options: Partial<StatusModalOptions> = {}
     ) {
-        if (message.data && message.data.message) {
-            message = message.data.message;
-        } else if (message.message) {
-            message = message.message;
+        options.title ??= 'New Message!';
+
+        if (options.message.data && options.message.data.message) {
+            options.message = options.message.data.message;
+        } else if (options.message.message) {
+            options.message = options.message.message;
         }
 
-        let final_message = message.toString();
+        let final_message = options.message.toString();
 
         // Web3 helpers
         // eslint-disable-next-line no-lone-blocks
@@ -69,21 +84,19 @@ export default abstract class StatusModal extends ModalHelper {
             .addClass('alert')
             .text(final_message);
 
-        const title = UIHelper.createElement('span')
+        const _title = UIHelper.createElement('span')
             .addClass('alert')
-            .text(header);
+            .text(options.title);
 
-        if (isError) {
-            title.addClass(style?.errorClass || 'text-danger');
-        } else {
-            title.addClass(style?.successClass || 'text-success');
+        if (options.class) {
+            _title.addClass(options.class);
         }
 
         ModalHelper.open({
             body,
-            title,
-            timeout,
-            useDefaultCloseButton
+            title: _title,
+            timeout: options.timeout,
+            useDefaultCloseButton: options.useDefaultCloseButton
         });
     }
 }
