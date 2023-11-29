@@ -20,14 +20,3 @@ Bundled up *common* UI tools
 
 [https://gibme-npm.github.io/web-ui/](https://gibme-npm.github.io/web-ui/)
 
-## Sample Code
-
-In your application...
-
-```typescript
-import WebUI from '@gibme/web-ui';
-
-WebUI.LoadingOverlay.show();
-
-setTimeout(() => WebUI.LoadingOverlay.hide(), 5_000);
-```
