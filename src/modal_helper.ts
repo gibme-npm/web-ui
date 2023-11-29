@@ -100,7 +100,14 @@ export default abstract class ModalHelper {
     public static readonly modal_close_button_selector = `${ModalHelper.id}-close-button`;
     public static readonly modal_body_selector = `${ModalHelper.id}-body`;
     public static readonly modal_footer_selector = `${ModalHelper.id}-footer`;
-    private static _open = false;
+    private static _isOpen = false;
+
+    /**
+     * Returns if the modal is currently open
+     */
+    public static get isOpen (): boolean {
+        return ModalHelper._isOpen;
+    }
 
     /**
      * Adds an event listener to the modal
@@ -198,12 +205,15 @@ export default abstract class ModalHelper {
     }
 
     /**
-     * Replaces an existing modal with the new modal if one is already open
-     * while allowing the proper animations to play
+     * Opens the modal using the supplied options
+     *
+     * Note: If body, title, or footer are passed as JQuery<> elements the call is
+     * non-destructive (i.e. the elements will be cloned and the ids changed to avoid
+     * conflicts elsewhere)
      *
      * @param options
      */
-    public static replace<
+    public static open<
         BodyElement extends HTMLElement = HTMLElement,
         TitleElement extends HTMLElement = HTMLElement,
         FooterElement extends HTMLElement = HTMLElement
@@ -214,13 +224,26 @@ export default abstract class ModalHelper {
 
         if (ModalHelper.isOpen) {
             ModalHelper.once('hidden', () => {
-                ModalHelper.open(options);
+                ModalHelper._open(options);
             });
 
             ModalHelper.close();
         } else {
-            ModalHelper.open(options);
+            ModalHelper._open(options);
         }
+    }
+
+    /**
+     * Allows for selecting an element within the modal itself
+     *
+     * @param selector
+     */
+    public static select<Type extends HTMLElement = HTMLElement> (
+        selector: JQuery.Selector
+    ): JQuery<Type> {
+        this._constructIfNotExist();
+
+        return $(`#${ModalHelper.modal_selector} ${selector}`);
     }
 
     /**
@@ -232,7 +255,7 @@ export default abstract class ModalHelper {
      *
      * @param options
      */
-    public static open<
+    private static _open<
         BodyElement extends HTMLElement = HTMLElement,
         TitleElement extends HTMLElement = HTMLElement,
         FooterElement extends HTMLElement = HTMLElement
@@ -319,19 +342,6 @@ export default abstract class ModalHelper {
     }
 
     /**
-     * Allows for selecting an element within the modal itself
-     *
-     * @param selector
-     */
-    public static select<Type extends HTMLElement = HTMLElement> (
-        selector: JQuery.Selector
-    ): JQuery<Type> {
-        this._constructIfNotExist();
-
-        return $(`#${ModalHelper.modal_selector} ${selector}`);
-    }
-
-    /**
      * Constructs the modal if it does not exist
      *
      * @private
@@ -340,13 +350,6 @@ export default abstract class ModalHelper {
         if ($(`${ModalHelper.modal_selector}`).length === 0) {
             this._constructModal();
         }
-    }
-
-    /**
-     * Returns if the modal is currently open
-     */
-    public static get isOpen (): boolean {
-        return ModalHelper._open;
     }
 
     /**
@@ -463,9 +466,9 @@ export default abstract class ModalHelper {
         modal.appendTo($(document.body));
 
         $(`#${this.modal_selector}`).on('hidden.bs.modal', () => {
-            this._open = false;
+            this._isOpen = false;
         }).on('shown.bs.modal', () => {
-            this._open = true;
+            this._isOpen = true;
         });
     }
 }
