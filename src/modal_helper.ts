@@ -24,6 +24,16 @@ import { v4 as uuid } from 'uuid';
 import UIHelper from './ui_helper';
 
 /**
+ * The size of the modal
+ */
+export type ModalSize = 'small' | 'default' | 'large' | 'x-large';
+
+/**
+ * The size of the fullscreen modal
+ */
+export type ModalFullscreenSize = 'default' | 'small' | 'medium' | 'large' | 'x-large' | 'xx-large';
+
+/**
  * Describes modal options
  */
 export interface ModalOpenOptions<
@@ -57,6 +67,22 @@ export interface ModalOpenOptions<
      * whereby they may be removed in the future.
      */
     destructive: boolean;
+    /**
+     * The size of the modal; defaults to 'large';
+     */
+    size: ModalSize;
+    /**
+     * The size of a fullscreen modal; defaults to `undefined`
+     */
+    fullscreenSize: ModalFullscreenSize;
+    /**
+     * Whether the modal should be scrollable; defaults to `false`
+     */
+    scrollable: boolean;
+    /**
+     * Whether the modal should be vertically centered; defaults to `true`
+     */
+    verticallyCentered: boolean;
 
     [key: string]: any;
 }
@@ -204,6 +230,30 @@ export default abstract class ModalHelper {
     }
 
     /**
+     * Replaces an existing modal with the new modal if one is already open
+     * while allowing the proper animations to play
+     *
+     * @param options
+     */
+    public static replace<
+        BodyElement extends HTMLElement = HTMLElement,
+        TitleElement extends HTMLElement = HTMLElement,
+        FooterElement extends HTMLElement = HTMLElement
+    > (
+        options: Partial<ModalOpenOptions<BodyElement, TitleElement, FooterElement>> = {}
+    ) {
+        if (ModalHelper.modal().length !== 0) {
+            ModalHelper.once('hidden', () => {
+                ModalHelper.open(options);
+            });
+
+            ModalHelper.close();
+        } else {
+            ModalHelper.open(options);
+        }
+    }
+
+    /**
      * Opens the modal using the supplied options
      *
      * Note: If body, title, or footer are passed as JQuery<> elements the call is
@@ -219,6 +269,8 @@ export default abstract class ModalHelper {
     > (options: Partial<ModalOpenOptions<BodyElement, TitleElement, FooterElement>> = {}) {
         options.title ??= 'New Message!';
         options.useDefaultCloseButton ??= true;
+        options.size ??= 'large';
+        options.verticallyCentered ??= true;
 
         if (!options.body) {
             throw new Error('Modal must have a body');
@@ -314,7 +366,12 @@ export default abstract class ModalHelper {
      *
      * @private
      */
-    private static _constructModal (): JQuery<HTMLElement> {
+    private static _constructModal (
+        options: Partial<ModalOpenOptions> = {}
+    ): JQuery<HTMLElement> {
+        options.size ??= 'large';
+        options.verticallyCentered ??= true;
+
         const modal = UIHelper.createElement('div')
             .addClass('modal fade')
             .attr('id', ModalHelper.modal_selector)
@@ -324,8 +381,55 @@ export default abstract class ModalHelper {
             .attr('aria-hidden', 'true');
 
         const dialog = UIHelper.createElement('div')
-            .addClass('modal-dialog modal-lg modal-dialog-centered')
+            .addClass('modal-dialog')
             .attr('role', 'document');
+
+        if (!options.fullscreenSize) {
+            switch (options.size) {
+                case 'small':
+                    dialog.addClass('modal-sm');
+                    break;
+                case 'large':
+                    dialog.addClass('modal-lg');
+                    break;
+                case 'x-large':
+                    dialog.addClass('modal-xl');
+                    break;
+                case 'default':
+                default:
+                    break;
+            }
+        } else {
+            switch (options.fullscreenSize) {
+                case 'small':
+                    dialog.addClass('modal-fullscreen-sm-down');
+                    break;
+                case 'medium':
+                    dialog.addClass('modal-fullscreen-md-down');
+                    break;
+                case 'large':
+                    dialog.addClass('modal-fullscreen-lg-down');
+                    break;
+                case 'x-large':
+                    dialog.addClass('modal-fullscreen-xl-down');
+                    break;
+                case 'xx-large':
+                    dialog.addClass('modal-fullscreen-xxl-down');
+                    break;
+                case 'default':
+                default:
+                    dialog.addClass('modal-fullscreen');
+                    break;
+            }
+        }
+
+        if (options.scrollable) {
+            dialog.addClass('modal-dialog-scrollable');
+        }
+
+        if (options.verticallyCentered) {
+            dialog.addClass('modal-dialog-centered');
+        }
 
         const content = UIHelper.createElement('div')
             .addClass('modal-content');
