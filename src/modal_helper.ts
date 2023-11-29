@@ -95,7 +95,9 @@ export type ModalEvent = 'show' | 'shown' | 'hide' | 'hidden' | 'hidePrevented';
 export default abstract class ModalHelper {
     private static readonly id = uuid();
     public static readonly modal_selector = `${ModalHelper.id}`;
+    public static readonly modal_dialog_selector = `${ModalHelper.id}-dialog`;
     public static readonly modal_header_selector = `${ModalHelper.id}-header`;
+    public static readonly modal_content_selector = `${ModalHelper.id}-content`;
     public static readonly modal_title_selector = `${ModalHelper.id}-title`;
     public static readonly modal_close_button_selector = `${ModalHelper.id}-close-button`;
     public static readonly modal_body_selector = `${ModalHelper.id}-body`;
@@ -146,6 +148,17 @@ export default abstract class ModalHelper {
         this._constructIfNotExist();
 
         return $(`#${ModalHelper.modal_selector}`);
+    }
+
+    /**
+     * Returns the modal dialog element
+     *
+     * @private
+     */
+    public static dialog (): JQuery<HTMLElement> {
+        this._constructIfNotExist();
+
+        return $(`#${ModalHelper.modal_dialog_selector}`);
     }
 
     /**
@@ -334,6 +347,9 @@ export default abstract class ModalHelper {
             ModalHelper.footer().addClass('d-none');
         }
 
+        // set the dialog options
+        ModalHelper._setDialogOptions(options);
+
         ModalHelper.modal().modal('show');
 
         if (options.timeout) {
@@ -347,33 +363,30 @@ export default abstract class ModalHelper {
      * @private
      */
     private static _constructIfNotExist () {
-        if ($(`${ModalHelper.modal_selector}`).length === 0) {
+        if ($(`#${ModalHelper.modal_selector}`).length === 0) {
             this._constructModal();
         }
     }
 
     /**
-     * Constructs a new instance of the modal within the document
+     * Sets the modal dialog options
      *
+     * @param options
      * @private
      */
-    private static _constructModal (
+    private static _setDialogOptions (
         options: Partial<ModalOpenOptions> = {}
     ): void {
-        options.size ??= 'large';
-        options.verticallyCentered ??= true;
-
-        const modal = UIHelper.createElement('div')
-            .addClass('modal fade')
-            .attr('id', ModalHelper.modal_selector)
-            .attr('tabindex', '-1')
-            .attr('role', 'dialog')
-            .attr('aria-labelledby', ModalHelper.modal_title_selector)
-            .attr('aria-hidden', 'true');
-
-        const dialog = UIHelper.createElement('div')
-            .addClass('modal-dialog')
-            .attr('role', 'document');
+        const dialog = ModalHelper.dialog()
+            .removeClass('modal-sm modal-lg modal-xl')
+            .removeClass('modal-fullscreen-sm-down')
+            .removeClass('modal-fullscreen-md-down')
+            .removeClass('modal-fullscreen-lg-down')
+            .removeClass('modal-fullscreen-xl-down')
+            .removeClass('modal-fullscreen-xxl-down')
+            .removeClass('modal-fullscreen')
+            .removeClass('modal-dialog-scrollable')
+            .removeClass('modal-dialog-centered');
 
         if (!options.fullscreenSize) {
             switch (options.size) {
@@ -421,13 +434,40 @@ export default abstract class ModalHelper {
         if (options.verticallyCentered) {
             dialog.addClass('modal-dialog-centered');
         }
+    }
+
+    /**
+     * Constructs a new instance of the modal within the document
+     *
+     * @private
+     */
+    private static _constructModal (
+        options: Partial<ModalOpenOptions> = {}
+    ): void {
+        options.size ??= 'large';
+        options.verticallyCentered ??= true;
+
+        const modal = UIHelper.createElement('div')
+            .addClass('modal fade')
+            .attr('id', ModalHelper.modal_selector)
+            .attr('tabindex', '-1')
+            .attr('role', 'dialog')
+            .attr('aria-labelledby', ModalHelper.modal_title_selector)
+            .attr('aria-hidden', 'true');
+
+        const dialog = UIHelper.createElement('div')
+            .addClass('modal-dialog')
+            .attr('id', ModalHelper.modal_dialog_selector)
+            .attr('role', 'document');
 
         const content = UIHelper.createElement('div')
-            .addClass('modal-content');
+            .addClass('modal-content')
+            .attr('id', ModalHelper.modal_content_selector);
 
         {
             const header = UIHelper.createElement('div')
-                .addClass('modal-header');
+                .addClass('modal-header')
+                .attr('id', ModalHelper.modal_header_selector);
 
             UIHelper.createElement('h5')
                 .addClass('modal-title')
