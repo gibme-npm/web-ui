@@ -87,6 +87,9 @@ export interface ModalOpenOptions<
     [key: string]: any;
 }
 
+/**
+ * Modal events
+ */
 export type ModalEvent = 'show' | 'shown' | 'hide' | 'hidden' | 'hidePrevented';
 
 export default abstract class ModalHelper {
@@ -97,6 +100,7 @@ export default abstract class ModalHelper {
     public static readonly modal_close_button_selector = `${ModalHelper.id}-close-button`;
     public static readonly modal_body_selector = `${ModalHelper.id}-body`;
     public static readonly modal_footer_selector = `${ModalHelper.id}-footer`;
+    private static _open = false;
 
     /**
      * Adds an event listener to the modal
@@ -105,17 +109,17 @@ export default abstract class ModalHelper {
      * @param listener
      */
     public static on (event: ModalEvent, listener: (...args: any[]) => void) {
-        $(`#${ModalHelper.modal_selector}`).on(`${event}.bs.modal`, listener);
+        ModalHelper.modal().on(`${event}.bs.modal`, listener);
     }
 
     /**
-     * Removes an event listener form the modal
+     * Removes an event listener from the modal
      *
      * @param event
      * @param listener
      */
     public static off (event: ModalEvent, listener: (...args: any[]) => void) {
-        $(`#${ModalHelper.modal_selector}`).off(`${event}.bs.modal`, listener);
+        ModalHelper.modal().off(`${event}.bs.modal`, listener);
     }
 
     /**
@@ -125,95 +129,59 @@ export default abstract class ModalHelper {
      * @param listener
      */
     public static once (event: ModalEvent, listener: (...args: any[]) => void) {
-        $(`#${ModalHelper.modal_selector}`).one(`${event}.bs.modal`, listener);
+        ModalHelper.modal().one(`${event}.bs.modal`, listener);
     }
 
     /**
      * Returns the modal element
-     *
-     * @param parent
      */
-    public static modal<ElementType extends HTMLElement = HTMLElement> (
-        parent?: JQuery<ElementType>
-    ): JQuery<HTMLElement> {
-        if (parent) {
-            return parent.find(`#${ModalHelper.modal_selector}`);
-        }
+    public static modal (): JQuery<HTMLElement> {
+        this._constructIfNotExist();
 
         return $(`#${ModalHelper.modal_selector}`);
     }
 
     /**
      * Returns the modal header element
-     *
-     * @param parent
      */
-    public static header<ElementType extends HTMLElement = HTMLElement> (
-        parent?: JQuery<ElementType>
-    ): JQuery<HTMLElement> {
-        if (parent) {
-            return parent.find(`#${ModalHelper.modal_header_selector}`);
-        }
+    public static header (): JQuery<HTMLElement> {
+        this._constructIfNotExist();
 
         return $(`#${ModalHelper.modal_header_selector}`);
     }
 
     /**
      * Returns the modal title element
-     *
-     * @param parent
      */
-    public static title<ElementType extends HTMLElement = HTMLElement> (
-        parent?: JQuery<ElementType>
-    ): JQuery<HTMLElement> {
-        if (parent) {
-            return parent.find(`#${ModalHelper.modal_title_selector}`);
-        }
+    public static title (): JQuery<HTMLElement> {
+        this._constructIfNotExist();
 
         return $(`#${ModalHelper.modal_title_selector}`);
     }
 
     /**
      * Returns the modal close button element
-     *
-     * @param parent
      */
-    public static close_button<ElementType extends HTMLElement = HTMLElement> (
-        parent?: JQuery<ElementType>
-    ): JQuery<HTMLElement> {
-        if (parent) {
-            return parent.find(`#${ModalHelper.modal_close_button_selector}`);
-        }
+    public static close_button (): JQuery<HTMLElement> {
+        this._constructIfNotExist();
 
         return $(`#${ModalHelper.modal_close_button_selector}`);
     }
 
     /**
      * Returns the modal body element
-     *
-     * @param parent
      */
-    public static body<ElementType extends HTMLElement = HTMLElement> (
-        parent?: JQuery<ElementType>
-    ): JQuery<HTMLElement> {
-        if (parent) {
-            return parent.find(`#${ModalHelper.modal_body_selector}`);
-        }
+    public static body (): JQuery<HTMLElement> {
+        this._constructIfNotExist();
 
         return $(`#${ModalHelper.modal_body_selector}`);
     }
 
     /**
      * Returns the modal footer element
-     *
-     * @param parent
      */
-    public static footer<ElementType extends HTMLElement = HTMLElement> (
-        parent?: JQuery<ElementType>
-    ): JQuery<HTMLElement> {
-        if (parent) {
-            return parent.find(`#${ModalHelper.modal_footer_selector}`);
-        }
+    public static footer (): JQuery<HTMLElement> {
+        this._constructIfNotExist();
 
         return $(`#${ModalHelper.modal_footer_selector}`);
     }
@@ -224,9 +192,9 @@ export default abstract class ModalHelper {
      * Note: can be called even if the modal is not open
      */
     public static close () {
-        if (ModalHelper.modal().length !== 0) {
-            ModalHelper.modal().modal('hide');
-        }
+        this._constructIfNotExist();
+
+        ModalHelper.modal().modal('hide');
     }
 
     /**
@@ -242,7 +210,9 @@ export default abstract class ModalHelper {
     > (
         options: Partial<ModalOpenOptions<BodyElement, TitleElement, FooterElement>> = {}
     ) {
-        if (ModalHelper.modal().length !== 0) {
+        this._constructIfNotExist();
+
+        if (ModalHelper.isOpen) {
             ModalHelper.once('hidden', () => {
                 ModalHelper.open(options);
             });
@@ -272,6 +242,8 @@ export default abstract class ModalHelper {
         options.size ??= 'large';
         options.verticallyCentered ??= true;
 
+        this._constructIfNotExist();
+
         if (!options.body) {
             throw new Error('Modal must have a body');
         }
@@ -286,10 +258,6 @@ export default abstract class ModalHelper {
 
         if (options.footer && typeof options.footer !== 'string' && options.footer.length === 0) {
             throw new Error('Could not locate specified footer element for modal');
-        }
-
-        if (ModalHelper.modal().length === 0) {
-            this._constructModal().appendTo($(document.body));
         }
 
         if (options.useDefaultCloseButton) {
@@ -358,7 +326,27 @@ export default abstract class ModalHelper {
     public static select<Type extends HTMLElement = HTMLElement> (
         selector: JQuery.Selector
     ): JQuery<Type> {
+        this._constructIfNotExist();
+
         return $(`#${ModalHelper.modal_selector} ${selector}`);
+    }
+
+    /**
+     * Constructs the modal if it does not exist
+     *
+     * @private
+     */
+    private static _constructIfNotExist () {
+        if ($(`${ModalHelper.modal_selector}`).length === 0) {
+            this._constructModal();
+        }
+    }
+
+    /**
+     * Returns if the modal is currently open
+     */
+    public static get isOpen (): boolean {
+        return ModalHelper._open;
     }
 
     /**
@@ -368,7 +356,7 @@ export default abstract class ModalHelper {
      */
     private static _constructModal (
         options: Partial<ModalOpenOptions> = {}
-    ): JQuery<HTMLElement> {
+    ): void {
         options.size ??= 'large';
         options.verticallyCentered ??= true;
 
@@ -471,7 +459,13 @@ export default abstract class ModalHelper {
 
         dialog.appendTo(modal);
 
-        return modal;
+        modal.appendTo($(document.body));
+
+        $(`#${this.modal_selector}`).on('hidden.bs.modal', () => {
+            this._open = false;
+        }).on('shown.bs.modal', () => {
+            this._open = true;
+        });
     }
 }
 
