@@ -24,24 +24,33 @@ import $ from 'jquery';
  * The Google Charts loader options
  */
 export interface ChartOptions {
+    /**
+     * The chart packages to load; defaults to `corechart` only
+     *
+     * See: https://developers.google.com/chart/interactive/docs/gallery
+     */
+    packages: string[];
+    /**
+     * Ther charts version to load
+     */
     version: string | number;
 }
 
 /**
  * Loads the Google Charts API
  *
- * @param packages https://developers.google.com/chart/interactive/docs/gallery
  * @param options loader options to use
  */
 export const GoogleChartsLoader = async (
-    packages: string[] = ['corechart'],
-    options: Partial<ChartOptions> = { version: 'current' }
+    options: Partial<ChartOptions> = {}
 ): Promise<void> => {
+    options.packages ??= ['corechart'];
+
     return new Promise(resolve => {
         $.getScript('https://www.gstatic.com/charts/loader.js', () => {
             options.version ??= 'current';
 
-            google.charts.load(options.version, { packages });
+            google.charts.load(options.version, { packages: options.packages });
             google.charts.setOnLoadCallback(() => {
                 return resolve();
             });
