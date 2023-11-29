@@ -72,6 +72,7 @@ export interface FontAwesomeOptions {
     rotation: FontAwesome.Rotation;
     size: FontAwesome.Size;
     color: `#${string}`;
+    attributes: any[][];
 }
 
 /**
@@ -129,21 +130,14 @@ export default abstract class UIHelper {
     }
 
     /**
-     * Creates a font awesome button
-     *
-     * Note: This method supports legacy button creation via specifying the full FontAwesome icon path in the
-     * icon argument and an Array of attributes for the button. It also supports the new style icon creation
-     * such as that found in `createAwesomeIcon`. Support for the legacy method will be removed in a future
-     * release.
+     * Creates a button with a fontawesome icon inside
      *
      * @param icon
-     * @param attributesOrOptions
-     * @param attributes
+     * @param iconOptions
      */
     public static createAwesomeButton (
         icon: string | string[],
-        attributesOrOptions: string[][] | Partial<FontAwesomeButtonOptions> = [],
-        attributes: string[][] = []
+        iconOptions: Partial<FontAwesomeButtonOptions> = {}
     ): JQuery<HTMLElement> {
         if (Array.isArray(icon)) {
             icon = icon.join(' ');
@@ -153,35 +147,16 @@ export default abstract class UIHelper {
             .addClass('btn')
             .attr('type', 'button');
 
-        if (Array.isArray(attributesOrOptions)) {
-            const element = UIHelper.createElement('i')
-                .addClass(icon);
+        const element = UIHelper.createAwesomeIcon(icon, iconOptions);
 
-            for (const [key, value] of attributesOrOptions) {
-                if (value && value.trim().length !== 0) {
-                    element.attr(key, value.trim());
-                }
-            }
+        element.appendTo(button);
 
-            element.appendTo(button);
-        } else {
-            const element = UIHelper.createAwesomeIcon(icon, attributesOrOptions);
-
-            for (const [key, value] of attributes) {
-                if (value && value.trim().length !== 0) {
-                    element.attr(key, value.trim());
-                }
-            }
-
-            element.appendTo(button);
-
-            if (attributesOrOptions.label && typeof attributesOrOptions.label === 'string') {
-                UIHelper.createElement('span')
-                    .text(` ${attributesOrOptions.label}`)
-                    .appendTo(button);
-            } else if (attributesOrOptions.label && typeof attributesOrOptions.label !== 'string') {
-                attributesOrOptions.label.appendTo(button);
-            }
+        if (iconOptions.label && typeof iconOptions.label === 'string') {
+            UIHelper.createElement('span')
+                .text(` ${iconOptions.label}`)
+                .appendTo(button);
+        } else if (iconOptions.label && typeof iconOptions.label !== 'string') {
+            iconOptions.label.appendTo(button);
         }
 
         return button;
@@ -236,6 +211,14 @@ export default abstract class UIHelper {
 
         if (options.class) {
             element.addClass(options.class);
+        }
+
+        if (options.attributes) {
+            for (const [key, value] of options.attributes) {
+                if (value && value.toString().trim().length !== 0) {
+                    element.attr(key.toString().trim(), value.toString().trim());
+                }
+            }
         }
 
         return element;

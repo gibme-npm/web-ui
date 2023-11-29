@@ -431,14 +431,15 @@ export default abstract class ModalHelper {
                 .attr('id', ModalHelper.modal_title_selector)
                 .appendTo(header);
 
-            UIHelper.createAwesomeButton('xmark', {},
-                [
+            UIHelper.createAwesomeButton('xmark', {
+                attributes: [
                     ['aria-hidden', 'true'],
-                    ['id', ModalHelper.modal_close_button_selector],
+                    ['id', ModalHelper.modal_close_button_selector
+                    ],
                     ['data-dismiss', 'modal'],
                     ['aria-label', 'Close']
-                ])
-                .addClass('btn-outline-danger close')
+                ]
+            }).addClass('btn-danger close')
                 .on('click', () => ModalHelper.close())
                 .appendTo(header);
 
