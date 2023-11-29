@@ -26,13 +26,17 @@ import UIHelper from './ui_helper';
  */
 export interface StatusModalOptions {
     /**
-     * The message to display
-     */
-    message: any;
-    /**
      * The title to use for the status modal
      */
     title: string;
+    /**
+     * The message to display
+     */
+    body: any;
+    /**
+     * The message footer to display
+     */
+    footer: string;
     /**
      * A timeout wherein the modal will auto hide
      */
@@ -58,13 +62,13 @@ export default abstract class StatusModal extends ModalHelper {
     ) {
         options.title ??= 'New Message!';
 
-        if (options.message.data && options.message.data.message) {
-            options.message = options.message.data.message;
-        } else if (options.message.message) {
-            options.message = options.message.message;
+        if (options.body.data && options.body.data.message) {
+            options.body = options.body.data.message;
+        } else if (options.body.message) {
+            options.body = options.body.message;
         }
 
-        let final_message = options.message.toString();
+        let final_message = options.body.toString();
 
         // Web3 helpers
         // eslint-disable-next-line no-lone-blocks
@@ -93,8 +97,9 @@ export default abstract class StatusModal extends ModalHelper {
         }
 
         ModalHelper.open({
-            body,
             title: _title,
+            body,
+            footer: options.footer,
             timeout: options.timeout,
             useDefaultCloseButton: options.useDefaultCloseButton
         });
