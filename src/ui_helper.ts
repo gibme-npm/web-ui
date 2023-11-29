@@ -232,13 +232,17 @@ export default abstract class UIHelper {
      */
     public static createDataTable<Type = any> (
         id: string | JQuery<HTMLElement>,
-        options?: DataTableConfig
+        options: DataTableConfig = {}
     ): DataTablesAPI<Type> {
         if (typeof id === 'string' && !id.startsWith('#')) {
             id = `#${id}`;
         }
 
-        return ((typeof id === 'string') ? $(`#${id}`) : id).DataTable(options);
+        if (!options.destroy) {
+            options.retrieve ??= true;
+        }
+
+        return ((typeof id === 'string') ? $(`${id}`) : id).DataTable(options);
     }
 
     /**
