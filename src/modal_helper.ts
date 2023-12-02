@@ -31,7 +31,7 @@ export type ModalSize = 'small' | 'default' | 'large' | 'x-large';
 /**
  * The size of the fullscreen modal
  */
-export type ModalFullscreenSize = 'default' | 'small' | 'medium' | 'large' | 'x-large' | 'xx-large';
+export type ModalFullscreenSize = 'always' | 'small' | 'medium' | 'large' | 'x-large' | 'xx-large';
 
 /**
  * Describes modal options
@@ -388,43 +388,42 @@ export default abstract class ModalHelper {
             .removeClass('modal-dialog-scrollable')
             .removeClass('modal-dialog-centered');
 
-        if (!options.fullscreenSize) {
-            switch (options.size) {
-                case 'small':
-                    dialog.addClass('modal-sm');
-                    break;
-                case 'large':
-                    dialog.addClass('modal-lg');
-                    break;
-                case 'x-large':
-                    dialog.addClass('modal-xl');
-                    break;
-                case 'default':
-                default:
-                    break;
-            }
-        } else {
-            switch (options.fullscreenSize) {
-                case 'small':
-                    dialog.addClass('modal-fullscreen-sm-down');
-                    break;
-                case 'medium':
-                    dialog.addClass('modal-fullscreen-md-down');
-                    break;
-                case 'large':
-                    dialog.addClass('modal-fullscreen-lg-down');
-                    break;
-                case 'x-large':
-                    dialog.addClass('modal-fullscreen-xl-down');
-                    break;
-                case 'xx-large':
-                    dialog.addClass('modal-fullscreen-xxl-down');
-                    break;
-                case 'default':
-                default:
-                    dialog.addClass('modal-fullscreen');
-                    break;
-            }
+        switch (options.size) {
+            case 'small':
+                dialog.addClass('modal-sm');
+                break;
+            case 'large':
+                dialog.addClass('modal-lg');
+                break;
+            case 'x-large':
+                dialog.addClass('modal-xl');
+                break;
+            case 'default':
+            default:
+                break;
+        }
+
+        switch (options.fullscreenSize) {
+            case 'small':
+                dialog.addClass('modal-fullscreen-sm-down');
+                break;
+            case 'medium':
+                dialog.addClass('modal-fullscreen-md-down');
+                break;
+            case 'large':
+                dialog.addClass('modal-fullscreen-lg-down');
+                break;
+            case 'x-large':
+                dialog.addClass('modal-fullscreen-xl-down');
+                break;
+            case 'xx-large':
+                dialog.addClass('modal-fullscreen-xxl-down');
+                break;
+            case 'always':
+                dialog.addClass('modal-fullscreen');
+                break;
+            default:
+                break;
         }
 
         if (options.scrollable) {
