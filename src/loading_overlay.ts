@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@ export interface LoadingOverlayOptions {
     fontawesomeOrder: number;
     custom: string;
     customAnimation: string;
+    customAutoResize: boolean;
     customAnimationResize: boolean;
     customResizeFactor: number;
     customOrder: number;
@@ -76,7 +77,7 @@ export interface LoadingOverlayOptions {
 /**
  * Loading Overlay events
  */
-export type LoadingOverlayEvent = 'shown' | 'hidden';
+export type LoadingOverlayEvent = 'shown' | 'hidden' | 'resized' | 'progress' | 'text';
 
 /**
  * Overlay display helper
@@ -126,22 +127,16 @@ export default abstract class LoadingOverlay {
     /**
      * Hides the displayed overlay
      *
-     * @param options
+     * @param force
      * @param target
      */
     public static hide<Type extends HTMLElement = HTMLElement> (
-        options: Partial<LoadingOverlayOptions> = {},
+        force: boolean = true,
         target: JQuery<Type> = $(document.body) as any
     ) {
-        options.zIndex ??= LoadingOverlay.zIndex;
+        target.LoadingOverlay('hide', force as any);
 
-        if (options.zIndex === Number.MAX_SAFE_INTEGER) {
-            options.zIndex = Number.MAX_SAFE_INTEGER - 1;
-        }
-
-        target.LoadingOverlay('hide', options);
-
-        this._open = true;
+        this._open = false;
 
         this._events.emit('hidden');
     }
@@ -149,39 +144,29 @@ export default abstract class LoadingOverlay {
     /**
      * Updates the progress in the current overlay
      *
-     * @param options
+     * @param value
      * @param target
      */
     public static progress<Type extends HTMLElement = HTMLElement> (
-        options: Partial<LoadingOverlayOptions> = {},
+        value: number | boolean,
         target: JQuery<Type> = $(document.body) as any
     ) {
-        options.zIndex ??= LoadingOverlay.zIndex;
+        target.LoadingOverlay('progress', value as any);
 
-        if (options.zIndex === Number.MAX_SAFE_INTEGER) {
-            options.zIndex = Number.MAX_SAFE_INTEGER - 1;
-        }
-
-        target.LoadingOverlay('progress', options);
+        this._events.emit('progress', value);
     }
 
     /**
      * Resizes the overlay
      *
-     * @param options
      * @param target
      */
     public static resize<Type extends HTMLElement = HTMLElement> (
-        options: Partial<LoadingOverlayOptions> = {},
         target: JQuery<Type> = $(document.body) as any
     ) {
-        options.zIndex ??= LoadingOverlay.zIndex;
+        target.LoadingOverlay('resize');
 
-        if (options.zIndex === Number.MAX_SAFE_INTEGER) {
-            options.zIndex = Number.MAX_SAFE_INTEGER - 1;
-        }
-
-        target.LoadingOverlay('resize', options);
+        this._events.emit('resized');
     }
 
     /**
@@ -210,21 +195,23 @@ export default abstract class LoadingOverlay {
         this._events.emit('shown');
 
         if (options.timeout) {
-            setTimeout(() => LoadingOverlay.hide(options, target), options.timeout);
+            setTimeout(() => LoadingOverlay.hide(true, target), options.timeout);
         }
     }
 
     /**
      * Updates the text in the current overlay
      *
-     * @param text
+     * @param value
      * @param target
      */
     public static text<Type extends HTMLElement = HTMLElement> (
-        text: string,
+        value: string,
         target: JQuery<Type> = $(document.body) as any
     ) {
-        target.LoadingOverlay('text', text as any);
+        target.LoadingOverlay('text', value as any);
+
+        this._events.emit('text', value);
     }
 }
 
