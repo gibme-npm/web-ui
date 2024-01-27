@@ -6,19 +6,23 @@
   "types": "./dist/web-ui.d.ts",
   "exports": {
     ".": "./dist/web-ui.js",
-    "./google.maps": "./dist/google_maps.js",
     "./google.charts": "./dist/google_charts.js",
+    "./google.fonts": "./dist/google_fonts.js",
+    "./google.maps": "./dist/google_maps.js",
     "./bootstrap": "./dist/bootstrap.js",
     "./datatables": "./dist/datatables.js",
     "./fontawesome": "./dist/fontawesome.js"
   },
   "typesVersions": {
     "*": {
-      "google.maps": [
-        "./dist/google_maps.d.ts"
-      ],
       "google.charts": [
         "./dist/google_charts.d.ts"
+      ],
+      "google.fonts": [
+        "./dist/google_fonts.d.ts"
+      ],
+      "google.maps": [
+        "./dist/google_maps.d.ts"
       ],
       "bootstrap": [
         "./dist/bootstrap.d.ts"
@@ -68,8 +72,9 @@
   "webpack": {
     "entry": {
       "WebUI": "./src/web-ui.ts",
-      "Google.Maps": "./src/google_maps.ts",
       "Google.Charts": "./src/google_charts.ts",
+      "Google.Fonts": "./src/google_fonts.ts",
+      "Google.Maps": "./src/google_maps.ts",
       "Bootstrap": "./src/bootstrap5.ts",
       "Datatables": "./src/datatables.ts",
       "FontAwesome": "./src/fontawesome.ts"

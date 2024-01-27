@@ -33,6 +33,7 @@ import moment from 'moment';
 import HLS, { HlsConfig as HLSConfig } from 'hls.js';
 import GoogleChartsLoader, { ChartOptions } from './google_charts';
 import GoogleMapsLoader, { MapOptions, USACentered } from './google_maps';
+import GoogleFontsLoader from './google_fonts';
 import UIHelper, {
     FontAwesome,
     FontAwesomeOptions,
@@ -57,6 +58,7 @@ export {
     Timer,
     GoogleChartsLoader,
     GoogleMapsLoader,
+    GoogleFontsLoader,
     USACentered,
     MapOptions,
     ChartOptions,
@@ -121,6 +123,7 @@ export default {
     sleep,
     GoogleChartsLoader,
     GoogleMapsLoader,
+    GoogleFontsLoader,
     USACentered,
     HLS,
     DataTable,
