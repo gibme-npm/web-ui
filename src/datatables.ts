@@ -67,4 +67,12 @@ import 'datatables.net-searchpanes-bs5/css/searchPanes.bootstrap5.min.css';
 import 'datatables.net-staterestore-bs5';
 import 'datatables.net-staterestore-bs5/css/stateRestore.bootstrap5.min.css';
 
+// preload the necessary modules for buttons
+import './datatables-preload';
+
 export { DataTable, DataTableConfig, DataTablesAPI };
+
+// load in the actual buttons
+require('datatables.net-buttons/js/buttons.html5.min.js');
+require('datatables.net-buttons/js/buttons.print.min.js');
+require('datatables.net-buttons/js/buttons.colVis.min.js');
