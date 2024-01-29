@@ -238,11 +238,20 @@ export default abstract class UIHelper {
             id = `#${id}`;
         }
 
+        const elem = ((typeof id === 'string') ? $(`${id}`) : id);
+
         if (!options.destroy) {
             options.retrieve ??= true;
         }
 
-        return ((typeof id === 'string') ? $(`${id}`) : id).DataTable(options);
+        const table = elem.DataTable(options);
+
+        if (options.buttons) {
+            table.buttons().container()
+                .appendTo(`#${elem.attr('id')}_wrapper .col-md-6:eq(0)`);
+        }
+
+        return table;
     }
 
     /**
