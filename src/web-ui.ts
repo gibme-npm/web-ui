@@ -92,6 +92,8 @@ export const createMediaElement = UIHelper.createMediaElement;
 export const fetchElement = UIHelper.fetchElement;
 export const fetchHTML = UIHelper.fetchHTML;
 export const fetchSelectorPath = UIHelper.fetchSelectorPath;
+export const readFileInputCount = UIHelper.readFileInputCount;
+export const readFileInputContents = UIHelper.readFileInputContents;
 
 /**
  * Sleeps for the specified timeout period
@@ -133,5 +135,7 @@ export default {
     CookieJar,
     fetchHTML,
     UUID,
-    fetchSelectorPath
+    fetchSelectorPath,
+    readFileInputCount,
+    readFileInputContents
 };

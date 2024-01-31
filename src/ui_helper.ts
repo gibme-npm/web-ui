@@ -471,6 +471,70 @@ export default abstract class UIHelper {
             .map(elem => `${type === 'id' ? '#' : ''}${elem}`)
             .join(type === 'id' ? ' ' : ' > ');
     }
+
+    /**
+     * Returns the number of files selected in a file input field
+     *
+     * @param element
+     */
+    public static readFileInputCount <Type extends HTMLElement = HTMLElement> (
+        element: JQuery<Type>
+    ): number {
+        return element.prop('files').length || 0;
+    }
+
+    /**
+     * Reads a file from a file input field and returns the file as a Buffer
+     *
+     * @param element
+     * @param idx
+     */
+    public static async readFileInputContents <Type extends HTMLElement = HTMLElement> (
+        element: JQuery<Type>,
+        idx = 0
+    ): Promise<{
+        content: Buffer,
+        name: string,
+        size: number
+    }> {
+        return new Promise((resolve, reject) => {
+            const files: any[] = element.prop('files');
+
+            if (!files || files.length === 0) {
+                return reject(new Error('Could not read input field'));
+            }
+
+            const file = files[idx];
+
+            if (!file) {
+                return reject(new Error('Could not read input field'));
+            }
+
+            const reader = new FileReader();
+
+            reader.addEventListener('load', () => {
+                if (!reader.result) {
+                    return reject(new Error('Could not read file from input field'));
+                }
+
+                let buffer: Buffer;
+
+                if (reader.result instanceof ArrayBuffer) {
+                    buffer = Buffer.from(reader.result);
+                } else {
+                    buffer = Buffer.from(reader.result, 'utf8');
+                }
+
+                return resolve({
+                    content: buffer,
+                    name: file.name,
+                    size: file.size
+                });
+            });
+
+            reader.readAsArrayBuffer(file);
+        });
+    }
 }
 
 export { UIHelper };
