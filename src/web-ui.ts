@@ -42,6 +42,8 @@ import UIHelper, {
     VideoElementOptions
 } from './ui_helper';
 import { v4 as UUID } from 'uuid';
+import { SmoothieChart, TimeSeries } from './smoothie';
+import ChartJS, { ChartJSHelpers } from './chartjs';
 
 export {
     $,
@@ -78,7 +80,11 @@ export {
     HTMLInputOptions,
     UUID,
     StatusModalOptions,
-    LoadingOverlayEvent
+    LoadingOverlayEvent,
+    SmoothieChart,
+    TimeSeries,
+    ChartJS,
+    ChartJSHelpers
 };
 
 export const clearElement = UIHelper.clearElement;
@@ -137,5 +143,9 @@ export default {
     UUID,
     fetchSelectorPath,
     readFileInputCount,
-    readFileInputContents
+    readFileInputContents,
+    SmoothieChart,
+    TimeSeries,
+    ChartJS,
+    ChartJSHelpers
 };

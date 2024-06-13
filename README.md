@@ -4,7 +4,7 @@ Bundled up *common* UI tools
 
 * [jQuery](https://jquery.com/)
 * [jQuery Loading Overlays](https://www.npmjs.com/package/gasparesganga-jquery-loading-overlay)
-* [Bootstrap](https://getbootstrap.com/) (Note: this auto loads)
+* [Bootstrap](https://getbootstrap.com/) (Note: this autoloads)
 * [Bootstrap Modals](https://getbootstrap.com/docs/5.2/components/modal/)
 * [cross-fetch](https://www.npmjs.com/package/cross-fetch)
 * [FontAwesome-free](https://www.npmjs.com/package/@fortawesome/fontawesome-free)
@@ -15,6 +15,8 @@ Bundled up *common* UI tools
 * [hls.js](https://www.npmjs.com/package/hls.js)
 * [Google Charts Loader](https://developers.google.com/chart)
 * [Google Maps Loader](https://developers.google.com/maps)
+* [Smoothie Charts](http://smoothiecharts.org/)
+* [Chart.js](https://www.chartjs.org/)
 
 ## Documentation
 
