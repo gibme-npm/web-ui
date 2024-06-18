@@ -1,6 +1,6 @@
 {
   "name": "@gibme/web-ui",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A simple web-ui helper",
   "main": "./dist/web-ui.js",
   "types": "./dist/web-ui.d.ts",
@@ -14,7 +14,9 @@
     "./fontawesome": "./dist/fontawesome.js",
     "./smoothiecharts": "./dist/smoothie.js",
     "./chartjs": "./dist/chartjs.js",
-    "./loadingoverlay": "./dist/loading_overlay.js"
+    "./loadingoverlay": "./dist/loading_overlay.js",
+    "./websocketclient": "./dist/websocket-shim.js",
+    "./jquery": "./dist/jquery.js"
   },
   "typesVersions": {
     "*": {
@@ -44,6 +46,12 @@
       ],
       "loadingoverlay": [
         "./dist/loading_overlay.d.ts"
+      ],
+      "websocketclient": [
+        "./dist/websocket-shim.d.ts"
+      ],
+      "jquery": [
+        "./dist/jquery.d.ts"
       ]
     }
   },
@@ -92,7 +100,9 @@
       "FontAwesome": "./src/fontawesome.ts",
       "SmoothieCharts": "./src/smoothie.ts",
       "ChartJS": "./src/chartjs.ts",
-      "LoadingOverlay": "./src/loading_overlay.ts"
+      "LoadingOverlay": "./src/loading_overlay.ts",
+      "WebSocketClient": "./src/websocket-shim.ts",
+      "JQuery": "./src/jquery.ts"
     }
   },
   "devDependencies": {
