@@ -32,7 +32,7 @@ export enum WebSocketReadyState {
 export interface WebSocketClientOptions {
     url: string;
     protocols?: string | string[];
-    binaryType: 'arraybuffer' | 'blob';
+    binaryType?: 'arraybuffer' | 'blob';
 }
 
 export default class WebSocketClient extends EventEmitter {
@@ -59,7 +59,7 @@ export default class WebSocketClient extends EventEmitter {
     public connect () {
         this.socket = new WebSocket(this.options.url, this.options.protocols);
 
-        this.binaryType = this.options.binaryType;
+        this.binaryType = this.options.binaryType || 'arraybuffer';
 
         this.socket.addEventListener('close', () => this.emit('close'));
         this.socket.addEventListener('error', event =>
