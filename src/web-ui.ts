@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
+import $ from './jquery';
 import './bootstrap5';
 import './fontawesome';
 import { DataTable, DataTableConfig, DataTablesAPI } from './datatables';
@@ -44,6 +44,7 @@ import UIHelper, {
 import { v4 as UUID } from 'uuid';
 import { SmoothieChart, TimeSeries } from './smoothie';
 import ChartJS, { ChartJSHelpers } from './chartjs';
+import WebSocketClient, { WebSocketReadyState } from './websocket-shim';
 
 export {
     $,
@@ -84,7 +85,9 @@ export {
     SmoothieChart,
     TimeSeries,
     ChartJS,
-    ChartJSHelpers
+    ChartJSHelpers,
+    WebSocketClient,
+    WebSocketReadyState
 };
 
 export const clearElement = UIHelper.clearElement;
@@ -147,5 +150,7 @@ export default {
     SmoothieChart,
     TimeSeries,
     ChartJS,
-    ChartJSHelpers
+    ChartJSHelpers,
+    WebSocketClient,
+    WebSocketReadyState
 };

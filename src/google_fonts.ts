@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
+import $ from './jquery';
 import Helper from './ui_helper';
 
 export type FontDisplayType = 'auto' | 'block' | 'swap' | 'fallback' | 'optional';

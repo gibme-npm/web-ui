@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import $ from './jquery';
 import './bootstrap5';
-import $ from 'jquery';
 import { v4 as uuid } from 'uuid';
 import UIHelper from './ui_helper';
 

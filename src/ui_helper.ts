@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
+import $ from './jquery';
 import { DataTableConfig, DataTablesAPI } from './datatables';
 import HLS, { HlsConfig as HLSConfig } from 'hls.js';
 import { v4 as uuid } from 'uuid';
