@@ -23,7 +23,7 @@ import { EventEmitter } from 'events';
 const WebSocket = global.WebSocket;
 
 export enum WebSocketReadyState {
-    CONNECTING= 0,
+    CONNECTING = 0,
     OPEN = 1,
     CLOSING = 2,
     CLOSED = 3
@@ -42,8 +42,6 @@ export default class WebSocketClient extends EventEmitter {
         super();
 
         this.options.binaryType ??= 'arraybuffer';
-
-        this.connect();
     }
 
     public on(event: 'close', listener: () => void): this;
@@ -58,7 +56,7 @@ export default class WebSocketClient extends EventEmitter {
         return super.on(event, listener);
     }
 
-    private connect () {
+    public connect () {
         this.socket = new WebSocket(this.options.url, this.options.protocols);
 
         this.binaryType = this.options.binaryType;
