@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,139 +18,61 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from './jquery';
-import './bootstrap5';
-import './fontawesome';
-import { DataTable, DataTableConfig, DataTablesAPI } from './datatables';
-import fetch, { Cookie, CookieJar, Headers, Request, Response } from '@gibme/fetch';
-import LoadingOverlay, { LoadingOverlayEvent, LoadingOverlayOptions } from './loading_overlay';
-import LocalStorage from '@gibme/local-storage';
-import numeral from 'numeral';
-import ModalHelper from './modal_helper';
-import StatusModal, { StatusModalOptions } from './status_modal';
-import Timer from '@gibme/timer';
-import moment from 'moment';
-import HLS, { HlsConfig as HLSConfig } from 'hls.js';
-import GoogleChartsLoader, { ChartOptions } from './google_charts';
-import GoogleMapsLoader, { MapOptions, USACentered } from './google_maps';
-import GoogleFontsLoader from './google_fonts';
-import UIHelper, {
-    FontAwesome,
-    FontAwesomeOptions,
-    HTMLInput,
-    HTMLInputOptions,
-    VideoElementOptions
-} from './ui_helper';
-import { v4 as UUID } from 'uuid';
-import { SmoothieChart, TimeSeries } from './smoothie';
-import ChartJS, { ChartJSHelpers } from './chartjs';
-import WebSocketClient, { WebSocketReadyState } from './websocket-shim';
+import load_from_cdn from './helpers/load_from_cdn';
+import hook_dom_load from './helpers/hook_dom_load';
+import './jquery.extensions/all';
 
-export {
-    $,
-    fetch,
-    Headers,
-    Request,
-    Response,
-    LoadingOverlay,
-    LoadingOverlayOptions,
-    LocalStorage,
-    numeral,
-    moment,
-    StatusModal,
-    Timer,
-    GoogleChartsLoader,
-    GoogleMapsLoader,
-    GoogleFontsLoader,
-    USACentered,
-    MapOptions,
-    ChartOptions,
-    HLS,
-    HLSConfig,
-    DataTableConfig,
-    DataTablesAPI,
-    DataTable,
-    ModalHelper,
-    VideoElementOptions,
-    UIHelper,
-    Cookie,
-    CookieJar,
-    FontAwesome,
-    FontAwesomeOptions,
-    HTMLInput,
-    HTMLInputOptions,
-    UUID,
-    StatusModalOptions,
-    LoadingOverlayEvent,
-    SmoothieChart,
-    TimeSeries,
-    ChartJS,
-    ChartJSHelpers,
-    WebSocketClient,
-    WebSocketReadyState
-};
+export { default as ModalHelper } from './modules/modal';
+export { default as StatusModal } from './modules/status-modal';
+export { WebSocketReadyState } from './shims/websocket';
 
-export const clearElement = UIHelper.clearElement;
-export const createAwesomeIcon = UIHelper.createAwesomeIcon;
-export const createAwesomeButton = UIHelper.createAwesomeButton;
-export const createDataTable = UIHelper.createDataTable;
-export const createElement = UIHelper.createElement;
-export const createFloatingInputGroup = UIHelper.createFloatingInputGroup;
-export const createHLSMediaElement = UIHelper.createHLSMediaElement;
-export const createMediaElement = UIHelper.createMediaElement;
-export const fetchElement = UIHelper.fetchElement;
-export const fetchHTML = UIHelper.fetchHTML;
-export const fetchSelectorPath = UIHelper.fetchSelectorPath;
-export const readFileInputCount = UIHelper.readFileInputCount;
-export const readFileInputContents = UIHelper.readFileInputContents;
+/** @ignore */
+interface LoadedInterface {
+    bootstrap: boolean;
+    fontawesome: boolean;
+    datatables: boolean;
+    chartjs: boolean;
+    hlsjs: boolean;
+    fetch: boolean;
+    smoothiecharts: boolean;
+    moment: boolean;
+    numeral: boolean;
 
-/**
- * Sleeps for the specified timeout period
- *
- * @param timeout in milliseconds
- */
-export const sleep = async (timeout: number) => new Promise(resolve => setTimeout(resolve, timeout));
+    [key: string]: boolean;
+}
 
-export default {
-    $,
-    Headers,
-    Request,
-    Response,
-    LoadingOverlay,
-    LocalStorage,
-    numeral,
-    moment,
-    StatusModal,
-    Timer,
-    createAwesomeButton,
-    clearElement,
-    createElement,
-    fetchElement,
-    createFloatingInputGroup,
-    createAwesomeIcon,
-    createHLSMediaElement,
-    createMediaElement,
-    createDataTable,
-    sleep,
-    GoogleChartsLoader,
-    GoogleMapsLoader,
-    GoogleFontsLoader,
-    USACentered,
-    HLS,
-    DataTable,
-    ModalHelper,
-    UIHelper,
-    Cookie,
-    CookieJar,
-    fetchHTML,
-    UUID,
-    fetchSelectorPath,
-    readFileInputCount,
-    readFileInputContents,
-    SmoothieChart,
-    TimeSeries,
-    ChartJS,
-    ChartJSHelpers,
-    WebSocketClient,
-    WebSocketReadyState
-};
+// Automatically loads upon script load BEFORE jQuery is loaded
+hook_dom_load(async () => {
+    const loaded: Partial<LoadedInterface> = {};
+
+    // Try to load bootstrap via the CDN
+    loaded.bootstrap = await load_from_cdn('bootstrap');
+
+    // Try to load fontawesome from the CDN
+    loaded.fontawesome = await load_from_cdn('fontawesome');
+
+    // Try to load DataTables.net from the CDN
+    if (loaded.bootstrap) {
+        loaded.datatables = await load_from_cdn('datatables-bs5');
+    } else {
+        loaded.datatables = await load_from_cdn('datatables-dt');
+    }
+
+    // Try to load Chart.js from the CDN
+    loaded.chartjs = await load_from_cdn('chartjs');
+
+    // Try to load Smoothie Charts from the CDN
+    loaded.smoothiecharts = await load_from_cdn('smoothiecharts');
+
+    // Try to load hls.js from CDN
+    loaded.hlsjs = await load_from_cdn('hls');
+
+    // Try to load @gibme/fetch
+    loaded.fetch = await load_from_cdn('fetch');
+
+    // Try to load moment.js
+    loaded.moment = await load_from_cdn('moment');
+
+    // Try to load numeral.js
+    loaded.numeral = await load_from_cdn('numeral');
+});

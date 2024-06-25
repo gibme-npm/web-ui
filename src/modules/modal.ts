@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,10 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from './jquery';
-import './bootstrap5';
-import { v4 as uuid } from 'uuid';
-import UIHelper from './ui_helper';
+import $ from 'jquery';
 
 /**
  * The size of the modal
@@ -93,7 +90,7 @@ export interface ModalOpenOptions<
 export type ModalEvent = 'show' | 'shown' | 'hide' | 'hidden' | 'hidePrevented';
 
 export default abstract class ModalHelper {
-    private static readonly id = uuid();
+    private static readonly id = $.uuid();
     public static readonly modal_selector = `${ModalHelper.id}`;
     public static readonly modal_dialog_selector = `${ModalHelper.id}-dialog`;
     public static readonly modal_header_selector = `${ModalHelper.id}-header`;
@@ -320,7 +317,7 @@ export default abstract class ModalHelper {
                         .attr('id', `${ModalHelper.id}-title-content`));
         }
 
-        UIHelper.clearElement(ModalHelper.body());
+        ModalHelper.body().empty();
         if (typeof options.body === 'string') {
             ModalHelper.body().text(options.body);
         } else {
@@ -331,7 +328,7 @@ export default abstract class ModalHelper {
                         .attr('id', `${ModalHelper.id}-body-content`));
         }
 
-        UIHelper.clearElement(ModalHelper.footer());
+        ModalHelper.footer().empty();
         if (options.footer) {
             if (typeof options.footer === 'string') {
                 ModalHelper.footer().text(options.footer);
@@ -446,7 +443,7 @@ export default abstract class ModalHelper {
         options.size ??= 'large';
         options.verticallyCentered ??= true;
 
-        const modal = UIHelper.createElement('div')
+        const modal = $('<div>')
             .addClass('modal fade')
             .attr('id', ModalHelper.modal_selector)
             .attr('tabindex', '-1')
@@ -454,30 +451,29 @@ export default abstract class ModalHelper {
             .attr('aria-labelledby', ModalHelper.modal_title_selector)
             .attr('aria-hidden', 'true');
 
-        const dialog = UIHelper.createElement('div')
+        const dialog = $('<div>')
             .addClass('modal-dialog')
             .attr('id', ModalHelper.modal_dialog_selector)
             .attr('role', 'document');
 
-        const content = UIHelper.createElement('div')
+        const content = $('<div>')
             .addClass('modal-content')
             .attr('id', ModalHelper.modal_content_selector);
 
         {
-            const header = UIHelper.createElement('div')
-                .addClass('modal-header')
+            const header = $('<div>')
+                .addClass('modal-header container-fluid d-flex flex-row')
                 .attr('id', ModalHelper.modal_header_selector);
 
-            UIHelper.createElement('h5')
-                .addClass('modal-title')
+            $('<h5>')
+                .addClass('modal-title flex-grow-1')
                 .attr('id', ModalHelper.modal_title_selector)
                 .appendTo(header);
 
-            UIHelper.createAwesomeButton('xmark', {
+            $.createAwesomeButton('xmark', {
                 attributes: [
                     ['aria-hidden', 'true'],
-                    ['id', ModalHelper.modal_close_button_selector
-                    ],
+                    ['id', ModalHelper.modal_close_button_selector],
                     ['data-dismiss', 'modal'],
                     ['aria-label', 'Close']
                 ]
@@ -488,12 +484,12 @@ export default abstract class ModalHelper {
             header.appendTo(content);
         }
 
-        UIHelper.createElement('div')
+        $('<div>')
             .addClass('modal-body')
             .attr('id', ModalHelper.modal_body_selector)
             .appendTo(content);
 
-        UIHelper.createElement('div')
+        $('<div>')
             .addClass('modal-footer')
             .attr('id', ModalHelper.modal_footer_selector)
             .appendTo(content);
@@ -504,12 +500,12 @@ export default abstract class ModalHelper {
 
         modal.appendTo($(document.body));
 
-        $(`#${this.modal_selector}`).on('hidden.bs.modal', () => {
-            this._isOpen = false;
-        }).on('shown.bs.modal', () => {
-            this._isOpen = true;
-        });
+        $(`#${this.modal_selector}`)
+            .on('hidden.bs.modal', () => {
+                this._isOpen = false;
+            })
+            .on('shown.bs.modal', () => {
+                this._isOpen = true;
+            });
     }
 }
-
-export { ModalHelper };

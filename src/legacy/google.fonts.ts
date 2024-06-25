@@ -18,9 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import ChartJS from 'chart.js/auto';
-import ChartJSHelpers from 'chart.js/helpers';
+import '../jquery.extensions/google';
+import { Google } from '../types';
 
-export { ChartJSHelpers };
+export type FontDisplayType = Google.Fonts.DisplayType;
 
-export default ChartJS;
+/**
+ * A very simple wrapper around the Google Fonts CSS API that loads fonts
+ * with Regular, Bold, Italic, and Bold Italic styles
+ *
+ * See: https://developers.google.com/fonts/docs/css2
+ *
+ * @param families
+ * @param display
+ * @constructor
+ */
+export const GoogleFontsLoader = (families: string | string[], display: FontDisplayType = 'swap') => {
+    return $.loadGoogleFonts(families, display);
+};
+
+export default GoogleFontsLoader;

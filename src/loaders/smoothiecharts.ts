@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,4 +18,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import '@fortawesome/fontawesome-free/js/all';
+import { load_script } from '../helpers/loaders';
+import type { SmoothieChart, TimeSeries } from 'smoothie';
+
+declare global {
+    interface Window {
+        SmoothieChart?: typeof SmoothieChart;
+        TimeSeries?: typeof TimeSeries;
+    }
+}
+
+const load_smoothiecharts = async (): Promise<boolean> => {
+    try {
+        await load_script(
+            'https://cdnjs.cloudflare.com/ajax/libs/smoothie/1.34.0/smoothie.min.js',
+            false,
+            'sha512-PNAPdJIoyrliVDPtSFYtH9pFQyeTxofjm3vAueqtsduqKqMCaMIiJcGzMYECbnep0sT0qdqWemVbSm2h86NdjQ=='
+        );
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+export default load_smoothiecharts;

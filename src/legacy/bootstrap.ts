@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,5 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import hook_dom_load from '../helpers/hook_dom_load';
+import load_bootstrap from '../loaders/bootstrap';
+
+hook_dom_load(async () => {
+    await load_bootstrap();
+});

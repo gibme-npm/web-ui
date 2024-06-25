@@ -18,4 +18,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-export { SmoothieChart, TimeSeries } from 'smoothie';
+import { load_script } from '../helpers/loaders';
+import type { Cookie, CookieJar, FetchInterface } from '@gibme/fetch';
+
+declare global {
+    interface Window {
+        Cookie?: typeof Cookie;
+        CookieJar?: typeof CookieJar;
+        Fetch?: FetchInterface;
+    }
+}
+
+const load_fetch = async (): Promise<boolean> => {
+    try {
+        await load_script(
+            'https://cdn.jsdelivr.net/npm/@gibme/fetch@1.0.14/dist/Fetch.bundle.js',
+            false
+        );
+        return true;
+    } catch (error: any) {
+        return false;
+    }
+};
+
+export default load_fetch;

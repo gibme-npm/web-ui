@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,44 +18,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from './jquery';
+import { load_script } from '../helpers/loaders';
+import type { Chart } from 'chart.js';
 
-/**
- * The Google Charts loader options
- */
-export interface ChartOptions {
-    /**
-     * The chart packages to load; defaults to `corechart` only
-     *
-     * See: https://developers.google.com/chart/interactive/docs/gallery
-     */
-    packages: string[];
-    /**
-     * Ther charts version to load
-     */
-    version: string | number;
+declare global {
+    interface Window {
+        Chart?: typeof Chart;
+    }
 }
 
-/**
- * Loads the Google Charts API
- *
- * @param options loader options to use
- */
-export const GoogleChartsLoader = async (
-    options: Partial<ChartOptions> = {}
-): Promise<void> => {
-    options.packages ??= ['corechart'];
-
-    return new Promise(resolve => {
-        $.getScript('https://www.gstatic.com/charts/loader.js', () => {
-            options.version ??= 'current';
-
-            google.charts.load(options.version, { packages: options.packages });
-            google.charts.setOnLoadCallback(() => {
-                return resolve();
-            });
-        });
-    });
+const load_chartjs = async (): Promise<boolean> => {
+    try {
+        await load_script(
+            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
+            false,
+            'sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==');
+        return true;
+    } catch {
+        return false;
+    }
 };
 
-export default GoogleChartsLoader;
+export default load_chartjs;

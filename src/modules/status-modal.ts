@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2023, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import ModalHelper from './modal_helper';
-import UIHelper from './ui_helper';
+import $ from 'jquery';
+import ModalHelper from './modal';
 
 /**
  * Describes status modal options
@@ -84,11 +84,11 @@ export default abstract class StatusModal extends ModalHelper {
             final_message = final_message.replace('execution reverted:', '').trim();
         }
 
-        const body = UIHelper.createElement('div')
+        const body = $('<div>')
             .addClass('alert')
             .text(final_message);
 
-        const _title = UIHelper.createElement('span')
+        const _title = $('<span>')
             .addClass('alert')
             .text(options.title);
 
@@ -105,5 +105,3 @@ export default abstract class StatusModal extends ModalHelper {
         });
     }
 }
-
-export { StatusModal };
