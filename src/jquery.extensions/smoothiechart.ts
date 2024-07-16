@@ -27,8 +27,9 @@ declare global {
          * Initialises a new SmoothieChart
          *
          * @param chartOptions
+         * @param delayMillis
          */
-        smoothieChart(chartOptions?: IChartOptions): SmoothieChart;
+        smoothieChart(chartOptions?: IChartOptions, delayMillis?: number): SmoothieChart;
     }
 
     interface JQueryStatic {
@@ -37,8 +38,13 @@ declare global {
          *
          * @param canvas
          * @param chartOptions
+         * @param delayMillis
          */
-        smoothieChart(canvas: JQuery<HTMLCanvasElement>, chartOptions?: IChartOptions): SmoothieChart;
+        smoothieChart(
+            canvas: JQuery<HTMLCanvasElement>,
+            chartOptions?: IChartOptions,
+            delayMillis?: number
+        ): SmoothieChart;
 
         /**
          * Initialises a new TimeSeries with optional data options.
@@ -52,14 +58,18 @@ declare global {
 {
     const charts = new Map<string, SmoothieChart>();
 
-    $.smoothieChart = function (canvas: JQuery<HTMLCanvasElement>, chartOptions?: IChartOptions): SmoothieChart {
+    $.smoothieChart = function (
+        canvas: JQuery<HTMLCanvasElement>,
+        chartOptions?: IChartOptions,
+        delayMillis?: number
+    ): SmoothieChart {
         if (!window.SmoothieChart) throw new Error('SmoothieCharts not loaded');
 
         const id = canvas.attr('id') || canvas.path('tagName');
 
         const chart = charts.get(id) || (() => {
             const chart = new window.SmoothieChart(chartOptions);
-            chart.streamTo(canvas.element<HTMLCanvasElement>());
+            chart.streamTo(canvas.element<HTMLCanvasElement>(), delayMillis);
             return chart;
         })();
 
@@ -76,9 +86,9 @@ $.timeSeries = function (seriesOptions?: ITimeSeriesOptions): TimeSeries {
 };
 
 $.fn.extend({
-    smoothieChart: function (chartOptions?: IChartOptions): SmoothieChart {
+    smoothieChart: function (chartOptions?: IChartOptions, delayMillis?: number): SmoothieChart {
         const canvas = $(this) as JQuery<HTMLCanvasElement>;
 
-        return $.smoothieChart(canvas, chartOptions);
+        return $.smoothieChart(canvas, chartOptions, delayMillis);
     }
 });
