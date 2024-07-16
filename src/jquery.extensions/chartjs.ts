@@ -20,6 +20,7 @@
 
 import $ from 'jquery';
 import type { Chart as ChartJSType, ChartConfiguration } from 'chart.js';
+import './html';
 
 declare global {
     interface JQuery {
@@ -48,11 +49,9 @@ declare global {
     $.chartJS = function (canvas: JQuery<HTMLCanvasElement>, options: ChartConfiguration): ChartJSType {
         if (!window.Chart) throw new Error('Chart.js not loaded');
 
-        const id = canvas.attr('id') || canvas.path('tagName');
+        const chart = charts.get(canvas.id()) || new window.Chart(canvas.element<HTMLCanvasElement>(), options);
 
-        const chart = charts.get(id) || new window.Chart(canvas.element<HTMLCanvasElement>(), options);
-
-        charts.set(id, chart);
+        charts.set(canvas.id(), chart);
 
         return chart;
     };

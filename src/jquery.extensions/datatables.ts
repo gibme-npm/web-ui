@@ -20,6 +20,7 @@
 
 import $ from 'jquery';
 import type { Api as DataTablesAPI, Config as DataTableConfig } from 'datatables.net-bs5';
+import './html';
 
 declare global {
     interface JQueryStatic {
@@ -54,7 +55,7 @@ $.createDataTable = function <ElementType extends HTMLElement = HTMLElement> (
 
     if (options.buttons) {
         table.buttons().container()
-            .appendTo(`#${elem.attr('id')}_wrapper .col-md-6:eq(0)`);
+            .appendTo(`#${elem.id()}_wrapper .col-md-6:eq(0)`);
     }
 
     return table;

@@ -95,7 +95,7 @@ $.createFloatingInputGroup = function (
     options.readonly ??= false;
     options.disabled ??= false;
 
-    const id = options.id || options.input?.attr('id') || $.uuid();
+    const id = options.id || options.input?.id() || $.uuid();
 
     const float = $('<div>')
         .addClass('form-floating input-group');

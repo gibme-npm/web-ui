@@ -20,6 +20,7 @@
 
 import $ from 'jquery';
 import type { IChartOptions, ITimeSeriesOptions, SmoothieChart, TimeSeries } from 'smoothie';
+import '../html';
 
 declare global {
     interface JQuery {
@@ -65,15 +66,13 @@ declare global {
     ): SmoothieChart {
         if (!window.SmoothieChart) throw new Error('SmoothieCharts not loaded');
 
-        const id = canvas.attr('id') || canvas.path('tagName');
-
-        const chart = charts.get(id) || (() => {
+        const chart = charts.get(canvas.id()) || (() => {
             const chart = new window.SmoothieChart(chartOptions);
             chart.streamTo(canvas.element<HTMLCanvasElement>(), delayMillis);
             return chart;
         })();
 
-        charts.set(id, chart);
+        charts.set(canvas.id(), chart);
 
         return chart;
     };

@@ -23,6 +23,7 @@
  * exports that legacy uses may expect, we need to make sure those are exported
  */
 
+import $ from 'jquery';
 import ChartJS, { ChartConfiguration } from 'chart.js/auto';
 import ChartJSHelpers from 'chart.js/helpers';
 import '../jquery.extensions/html';
@@ -52,11 +53,9 @@ declare global {
     const charts = new Map<string, ChartJS>();
 
     $.chartJS = function (canvas: JQuery<HTMLCanvasElement>, options: ChartConfiguration): ChartJS {
-        const id = canvas.attr('id') || canvas.path('tagName');
+        const chart = charts.get(canvas.id()) || new ChartJS(canvas.element<HTMLCanvasElement>(), options);
 
-        const chart = charts.get(id) || new ChartJS(canvas.element<HTMLCanvasElement>(), options);
-
-        charts.set(id, chart);
+        charts.set(canvas.id(), chart);
 
         return chart;
     };

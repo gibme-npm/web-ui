@@ -37,7 +37,7 @@ export default abstract class Overlay {
         if (typeof parent === 'string') {
             return $(`#${parent}`).length !== 0;
         } else {
-            return Overlay.instances.has(parent.path('tagName'));
+            return Overlay.instances.has(parent.id());
         }
     }
 
@@ -53,37 +53,36 @@ export default abstract class Overlay {
         action: Types.Action,
         options: Types.Options = {}
     ): JQuery {
-        const parent_path = parent.path('tagName');
-        const { id } = Overlay.instances.get(parent_path) || { id: $.uuid() };
+        const { id } = Overlay.instances.get(parent.id()) || { id: $.uuid() };
 
         if (action === 'text' && typeof options === 'string') {
-            options = Overlay.merge_options(parent_path, id,
+            options = Overlay.merge_options(parent.id(), id,
                 { text: { message: options } });
 
             return Overlay.text(parent, id, options);
         } else if (action === 'progress' && typeof options === 'number') {
-            options = Overlay.merge_options(parent_path, id,
+            options = Overlay.merge_options(parent.id(), id,
                 { progress: { value: options } });
 
             return Overlay.progress(parent, id, options);
         } else if (action === 'text' && typeof options === 'object' && (options as JQuery<HTMLElement>).jquery) {
-            options = Overlay.merge_options(parent_path, id,
+            options = Overlay.merge_options(parent.id(), id,
                 { text: { message: options as JQuery<HTMLElement> } });
 
             return Overlay.text(parent, id, options);
         } else if (action === 'icon' && typeof options === 'object') {
-            options = Overlay.merge_options(parent_path, id,
+            options = Overlay.merge_options(parent.id(), id,
                 { icon: options as Partial<Types.FontAwesomeOptions> });
 
             return Overlay.icon(parent, id, options);
         } else if (action === 'image' && typeof options === 'object') {
-            options = Overlay.merge_options(parent_path, id,
+            options = Overlay.merge_options(parent.id(), id,
                 { image: options as Partial<Types.ImageOptions> });
 
             return Overlay.image(parent, id, options);
         } else {
             options = Types.mergeOptions(options as Partial<Types.OverlayOptions>);
-            options = Overlay.merge_options(parent_path, id, options as Partial<Types.OverlayOptions>);
+            options = Overlay.merge_options(parent.id(), id, options as Partial<Types.OverlayOptions>);
 
             switch (action) {
                 case 'show':
@@ -144,7 +143,7 @@ export default abstract class Overlay {
                 .appendTo(parent);
 
             timer.on('tick', () =>
-                Overlay.auto_resize(parent, id, Overlay.instances.get(parent.path('tagName'))?.options));
+                Overlay.auto_resize(parent, id, Overlay.instances.get(parent.id())?.options));
 
             timer.start();
 
@@ -265,7 +264,7 @@ export default abstract class Overlay {
             });
         }
 
-        Overlay.instances.delete(parent.path('tagName'));
+        Overlay.instances.delete(parent.id());
         Overlay.resize_timers.delete(id);
         overlay.remove();
 

@@ -71,15 +71,13 @@ declare global {
         chartOptions?: IChartOptions,
         delayMillis?: number
     ): SmoothieChart {
-        const id = canvas.attr('id') || canvas.path('tagName');
-
-        const chart = charts.get(id) || (() => {
+        const chart = charts.get(canvas.id()) || (() => {
             const chart = new SmoothieChart(chartOptions);
             chart.streamTo(canvas.element<HTMLCanvasElement>(), delayMillis);
             return chart;
         })();
 
-        charts.set(id, chart);
+        charts.set(canvas.id(), chart);
 
         return chart;
     };
