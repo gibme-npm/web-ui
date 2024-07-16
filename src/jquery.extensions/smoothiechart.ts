@@ -20,7 +20,7 @@
 
 import $ from 'jquery';
 import type { IChartOptions, ITimeSeriesOptions, SmoothieChart, TimeSeries } from 'smoothie';
-import '../html';
+import './html';
 
 declare global {
     interface JQuery {
