@@ -20,6 +20,7 @@
 
 import $ from 'jquery';
 import type { HTML } from '../types';
+import './uuid';
 
 declare global {
     interface JQuery {
@@ -44,6 +45,12 @@ declare global {
          * Retrieve the full HTML for the specified element including the element itself
          */
         fullHTML(): string;
+
+        /**
+         * Returns the elements ID; or, if one is not set, assigns a random UUID to it
+         * and returns it
+         */
+        id(): string;
 
         /**
          * Returns the full selector path of the element
@@ -242,17 +249,30 @@ $.fn.extend({
             reader.readAsArrayBuffer(file);
         });
     },
-    fileCount: function () {
+    fileCount: function (): number {
         const parent = $(this) as JQuery<HTMLInputElement>;
 
         return parent.prop('files').length || 0;
     },
-    fullHTML: function () {
+    fullHTML: function (): string {
         const parent = $(this) as JQuery<HTMLElement>;
 
         return $('<div>')
             .append(parent.clone())
             .html();
+    },
+    id: function (): string {
+        const id = $(this).attr('id');
+
+        if (id) {
+            return id;
+        }
+
+        const uuid = $.uuid();
+
+        $(this).attr('id', uuid);
+
+        return uuid;
     },
     path: function (type: 'id' | 'tagName' = 'id') {
         let parent = $(this) as JQuery<HTMLElement>;
