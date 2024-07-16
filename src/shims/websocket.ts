@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 import { EventEmitter } from 'events';
+import { Buffer } from 'buffer';
 
 const WebSocket = global.WebSocket;
 

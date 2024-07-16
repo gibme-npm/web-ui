@@ -1,6 +1,6 @@
 {
   "name": "@gibme/web-ui",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "A simple web-ui helper",
   "main": "./dist/web-ui.js",
   "types": "./dist/web-ui.d.ts",
@@ -113,7 +113,7 @@
     }
   },
   "devDependencies": {
-    "@gibme/auto-pack": "^0.3.10",
+    "@gibme/auto-pack": "^0.3.11",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.11.8",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
@@ -143,6 +143,7 @@
     "@types/numeral": "^2.0.5",
     "@types/uuid": "^10.0.0",
     "bootstrap": "^5.3.3",
+    "buffer": "^6.0.3",
     "chart.js": "^4.4.3",
     "datatables.net-autofill-bs5": "^2.7.0",
     "datatables.net-bs5": "^2.0.8",
