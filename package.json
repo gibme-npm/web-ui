@@ -1,6 +1,6 @@
 {
   "name": "@gibme/web-ui",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "A simple web-ui helper",
   "main": "./dist/web-ui.js",
   "types": "./dist/web-ui.d.ts",
@@ -113,7 +113,7 @@
     }
   },
   "devDependencies": {
-    "@gibme/auto-pack": "^0.3.1",
+    "@gibme/auto-pack": "^0.3.10",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.11.8",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
