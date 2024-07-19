@@ -20,6 +20,7 @@
 
 import { EventEmitter } from 'events';
 import { Buffer } from 'buffer';
+import Timer from '@gibme/timer';
 
 const WebSocket = global.WebSocket;
 
@@ -139,6 +140,14 @@ export default class WebSocketClient extends EventEmitter {
      */
     public on(event: 'open', listener: () => void): this;
 
+    /**
+     * Emitted when the underlying WebSocket is ready
+     *
+     * @param event
+     * @param listener
+     */
+    public on(event: 'ready', listener: () => void): this;
+
     /** @ignore */
     public on (event: any, listener: (...args: any[]) => void): this {
         return super.on(event, listener);
@@ -175,6 +184,14 @@ export default class WebSocketClient extends EventEmitter {
      * @param listener
      */
     public once(event: 'open', listener: () => void): this;
+
+    /**
+     * Emitted when the underlying WebSocket is ready
+     *
+     * @param event
+     * @param listener
+     */
+    public once(event: 'ready', listener: () => void): this;
 
     /** @ignore */
     public once (event: any, listener: (...args: any[]) => void): this {
@@ -213,6 +230,14 @@ export default class WebSocketClient extends EventEmitter {
      */
     public off(event: 'open', listener: () => void): this;
 
+    /**
+     * Emitted when the underlying WebSocket is ready
+     *
+     * @param event
+     * @param listener
+     */
+    public off(event: 'ready', listener: () => void): this;
+
     /** @ignore */
     public off (event: any, listener: (...args: any[]) => void): this {
         return super.on(event, listener);
@@ -230,6 +255,16 @@ export default class WebSocketClient extends EventEmitter {
 
             this.binaryType = this.options.binaryType || 'arraybuffer';
 
+            const timer = new Timer(10, false);
+
+            timer.on('tick', () => {
+                if (this.readyState === WebSocketReadyState.OPEN) {
+                    timer.destroy();
+
+                    this.emit('ready');
+                }
+            });
+
             this.socket.addEventListener('close', () => this.emit('close'));
             this.socket.addEventListener('error', event =>
                 this.emit('error', new Error(event.toString())));
@@ -240,7 +275,11 @@ export default class WebSocketClient extends EventEmitter {
                     return this.emit('message', Buffer.from(event.data));
                 }
             });
-            this.socket.addEventListener('open', () => this.emit('open'));
+            this.socket.addEventListener('open', () => {
+                timer.start();
+
+                this.emit('open');
+            });
         } catch (error: any) {
             delete this.socket;
 
