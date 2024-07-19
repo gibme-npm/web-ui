@@ -225,21 +225,27 @@ export default class WebSocketClient extends EventEmitter {
      * to recreate it if we need to 'reconnect' the WebSocket later
      */
     public connect () {
-        this.socket = new WebSocket(this.options.url, this.options.protocols);
+        try {
+            this.socket = new WebSocket(this.options.url, this.options.protocols);
 
-        this.binaryType = this.options.binaryType || 'arraybuffer';
+            this.binaryType = this.options.binaryType || 'arraybuffer';
 
-        this.socket.addEventListener('close', () => this.emit('close'));
-        this.socket.addEventListener('error', event =>
-            this.emit('error', new Error(event.toString())));
-        this.socket.addEventListener('message', event => {
-            if (event.data instanceof ArrayBuffer) {
-                return this.emit('message', Buffer.from(event.data));
-            } else {
-                return this.emit('message', Buffer.from(event.data));
-            }
-        });
-        this.socket.addEventListener('open', () => this.emit('open'));
+            this.socket.addEventListener('close', () => this.emit('close'));
+            this.socket.addEventListener('error', event =>
+                this.emit('error', new Error(event.toString())));
+            this.socket.addEventListener('message', event => {
+                if (event.data instanceof ArrayBuffer) {
+                    return this.emit('message', Buffer.from(event.data));
+                } else {
+                    return this.emit('message', Buffer.from(event.data));
+                }
+            });
+            this.socket.addEventListener('open', () => this.emit('open'));
+        } catch (error: any) {
+            delete this.socket;
+
+            this.emit('error', new Error(error.toString()));
+        }
     }
 
     /**
