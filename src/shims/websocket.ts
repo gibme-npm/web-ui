@@ -139,7 +139,82 @@ export default class WebSocketClient extends EventEmitter {
      */
     public on(event: 'open', listener: () => void): this;
 
+    /** @ignore */
     public on (event: any, listener: (...args: any[]) => void): this {
+        return super.on(event, listener);
+    }
+
+    /**
+     * Emitted when the underlying WebSocket is closed
+     *
+     * @param event
+     * @param listener
+     */
+    public once(event: 'close', listener: () => void): this;
+
+    /**
+     * Emitted when the underlying WebSocket encounters an error
+     *
+     * @param event
+     * @param listener
+     */
+    public once(event: 'error', listener: (error: Error) => void): this;
+
+    /**
+     * Emitted when the underlying WebSocket receives a message
+     *
+     * @param event
+     * @param listener
+     */
+    public once(event: 'message', listener: (message: Buffer) => void): this;
+
+    /**
+     * Emitted when the underlying WebSocket is opened
+     *
+     * @param event
+     * @param listener
+     */
+    public once(event: 'open', listener: () => void): this;
+
+    /** @ignore */
+    public once (event: any, listener: (...args: any[]) => void): this {
+        return super.on(event, listener);
+    }
+
+    /**
+     * Emitted when the underlying WebSocket is closed
+     *
+     * @param event
+     * @param listener
+     */
+    public off(event: 'close', listener: () => void): this;
+
+    /**
+     * Emitted when the underlying WebSocket encounters an error
+     *
+     * @param event
+     * @param listener
+     */
+    public off(event: 'error', listener: (error: Error) => void): this;
+
+    /**
+     * Emitted when the underlying WebSocket receives a message
+     *
+     * @param event
+     * @param listener
+     */
+    public off(event: 'message', listener: (message: Buffer) => void): this;
+
+    /**
+     * Emitted when the underlying WebSocket is opened
+     *
+     * @param event
+     * @param listener
+     */
+    public off(event: 'open', listener: () => void): this;
+
+    /** @ignore */
+    public off (event: any, listener: (...args: any[]) => void): this {
         return super.on(event, listener);
     }
 
@@ -147,7 +222,7 @@ export default class WebSocketClient extends EventEmitter {
      * Attempts to connect the underlying WebSocket to the remote URL
      *
      * This method also allows us to re-use the class instance, so we do not have
-     * to recreate it if we need to 'reconnect' the WebSocket late
+     * to recreate it if we need to 'reconnect' the WebSocket later
      */
     public connect () {
         this.socket = new WebSocket(this.options.url, this.options.protocols);
