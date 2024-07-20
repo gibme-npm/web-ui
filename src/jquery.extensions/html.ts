@@ -83,13 +83,6 @@ declare global {
          * @param options
          */
         createMedia(src?: string, options?: Partial<HTML.Video.Options>): JQuery<HTMLMediaElement>;
-
-        /**
-         * Fetches the HTML DOM Object by the id or from a JQuery HTML Element
-         *
-         * @param id
-         */
-        element<ElementType = HTMLElement>(id: string | JQuery<ElementType>): ElementType;
     }
 }
 
@@ -203,10 +196,6 @@ $.createMedia = function (
     }
 
     return element;
-};
-
-$.element = function <ElementType = HTMLElement> (id: string | JQuery<ElementType>): ElementType {
-    return (typeof id === 'string' ? $(`#${id}`)[0] : id[0]) as any;
 };
 
 $.fn.extend({
