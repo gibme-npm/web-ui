@@ -27,7 +27,7 @@ declare global {
         /**
          * Fetches the HTML DOM Object
          */
-        element<ElementType extends HTMLElement = HTMLElement>(): ElementType;
+        element<ElementType = HTMLElement>(): ElementType;
 
         /**
          * Reads a file from a file input field and returns the file as a Buffer
@@ -58,6 +58,11 @@ declare global {
          * @param type
          */
         path(type: 'id' | 'tagName'): string;
+
+        /**
+         * Returns the element type
+         */
+        type(): string;
     }
 
     interface JQueryStatic {
@@ -84,7 +89,7 @@ declare global {
          *
          * @param id
          */
-        element<ElementType extends HTMLElement = HTMLElement>(id: string | JQuery<ElementType>): ElementType;
+        element<ElementType = HTMLElement>(id: string | JQuery<ElementType>): ElementType;
     }
 }
 
@@ -200,12 +205,12 @@ $.createMedia = function (
     return element;
 };
 
-$.element = function <ElementType extends HTMLElement = HTMLElement> (id: string | JQuery): ElementType {
+$.element = function <ElementType = HTMLElement> (id: string | JQuery<ElementType>): ElementType {
     return (typeof id === 'string' ? $(`#${id}`)[0] : id[0]) as any;
 };
 
 $.fn.extend({
-    element: function <ElementType extends HTMLElement = HTMLElement> () {
+    element: function <ElementType = HTMLElement> (): ElementType {
         return $(this)[0] as ElementType;
     },
     fileContents: function (idx = 0): Promise<{ content: Buffer, name: string, size: number }> {
@@ -274,7 +279,7 @@ $.fn.extend({
 
         return uuid;
     },
-    path: function (type: 'id' | 'tagName' = 'id') {
+    path: function (type: 'id' | 'tagName' = 'id'): string {
         let parent = $(this) as JQuery<HTMLElement>;
 
         const ids: string[] = [];
@@ -292,6 +297,8 @@ $.fn.extend({
         return ids.reverse()
             .map(elem => `${type === 'id' ? '#' : ''}${elem}`)
             .join(type === 'id' ? ' ' : ' > ');
+    },
+    type: function (): string {
+        return $(this).prev().prop('nodeName');
     }
-
 });
