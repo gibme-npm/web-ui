@@ -37,6 +37,7 @@ interface LoadedInterface {
     smoothiecharts: boolean;
     moment: boolean;
     numeral: boolean;
+    qrcode: boolean;
 
     [key: string]: boolean;
 }
@@ -69,6 +70,9 @@ hook_dom_load(async () => {
 
     // Try to load @gibme/fetch
     loaded.fetch = await load_from_cdn('fetch');
+
+    // Try to load @gibme/qrcode
+    loaded.qrcode = await load_from_cdn('qrcode');
 
     // Try to load moment.js
     loaded.moment = await load_from_cdn('moment');

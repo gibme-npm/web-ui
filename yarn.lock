@@ -104,6 +104,13 @@
     dotenv "^16.4.5"
     winston "^3.13.1"
 
+"@gibme/qrcode@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@gibme/qrcode/-/qrcode-1.0.1.tgz#4eaac9f00945ca83eb31492e47fc51e0d653300e"
+  integrity sha512-pswIoEAW+Wc5HkjPQgq4k2OdGojp5sVmpiaa8D+Eg8z4KAv08X4bPppu6vzgVvXyoXI5e6nBspA3MVOiM+6sxA==
+  dependencies:
+    deepmerge "^4.3.1"
+
 "@gibme/timer@^1.0.11":
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/@gibme/timer/-/timer-1.0.11.tgz#42284d2893d713c3ed61d2cba35208b05c3776de"

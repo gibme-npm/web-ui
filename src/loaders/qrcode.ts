@@ -18,21 +18,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import './chartjs';
-import './datatables';
-import './fetch';
-import './fontawesome';
-import './google';
-import './helpers';
-import './hls';
-import './html';
-import './local-storage';
-import './moment';
-import './numeral';
-import './overlay';
-import './qrcode';
-import './remotes';
-import './smoothiechart';
-import './timer';
-import './websocket';
-import './uuid';
+import { load_script } from '../helpers/loaders';
+import type { QRCode } from '@gibme/qrcode';
+
+declare global {
+    interface Window {
+        QRCode?: typeof QRCode;
+    }
+}
+
+const load_qrcode = async (): Promise<boolean> => {
+    try {
+        await load_script(
+            'https://cdn.jsdelivr.net/npm/@gibme/qrcode@1.0.1/dist/QRCode.bundle.js',
+            false
+        );
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+export default load_qrcode;
