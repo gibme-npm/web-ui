@@ -19,8 +19,8 @@
 // SOFTWARE.
 
 import $ from 'jquery';
-// eslint-disable-next-line import/no-named-default
-import type { default as WebSocketClient, WebSocketClientOptions } from '@gibme/websocket';
+import WebSocketClient, { WebSocketReadyState, WebSocketClientOptions } from '@gibme/websocket';
+export { WebSocketReadyState, WebSocketClientOptions };
 
 declare global {
     interface JQueryStatic {
@@ -34,7 +34,7 @@ declare global {
 }
 
 $.websocket = function (options: WebSocketClientOptions): WebSocketClient {
-    if (!window.WebSocketClient) throw new Error('WebSocketClient not loaded');
-
-    return new window.WebSocketClient(options);
+    return new WebSocketClient(options);
 };
+
+export default WebSocketClient;

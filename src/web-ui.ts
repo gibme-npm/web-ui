@@ -24,7 +24,7 @@ import './jquery.extensions/all';
 
 export { default as ModalHelper } from './modules/modal';
 export { default as StatusModal } from './modules/status-modal';
-export { WebSocketReadyState } from './shims/websocket';
+export { WebSocketReadyState } from './legacy/websocket';
 
 /** @ignore */
 interface LoadedInterface {
@@ -38,6 +38,7 @@ interface LoadedInterface {
     moment: boolean;
     numeral: boolean;
     qrcode: boolean;
+    websocket: boolean;
 
     [key: string]: boolean;
 }
@@ -58,6 +59,9 @@ hook_dom_load(async () => {
     } else {
         loaded.datatables = await load_from_cdn('datatables-dt');
     }
+
+    // Try to load @gibme/websocket
+    loaded.websocket = await load_from_cdn('websocket');
 
     // Try to load Chart.js from the CDN
     loaded.chartjs = await load_from_cdn('chartjs');

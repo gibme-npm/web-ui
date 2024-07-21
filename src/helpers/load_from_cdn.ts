@@ -28,10 +28,11 @@ import load_fetch from '../loaders/fetch';
 import load_moment from '../loaders/moment';
 import load_numeral from '../loaders/numeral';
 import load_qrcode from '../loaders/qrcode';
+import load_websocket from '../loaders/websocket';
 
 type Library = 'bootstrap' | 'fontawesome' | 'datatables-bs5' |
     'datatables-ju' | 'datatables-dt' | 'chartjs' | 'smoothiecharts' |
-    'hls' | 'fetch' | 'moment' | 'numeral' | 'qrcode';
+    'hls' | 'fetch' | 'moment' | 'numeral' | 'qrcode' | 'websocket';
 
 const load_from_cdn = async (library: Library): Promise<boolean> => {
     switch (library) {
@@ -59,6 +60,8 @@ const load_from_cdn = async (library: Library): Promise<boolean> => {
             return load_numeral();
         case 'qrcode':
             return load_qrcode();
+        case 'websocket':
+            return load_websocket();
         default:
             throw new Error('Unsupported library specified');
     }

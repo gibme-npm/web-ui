@@ -1,6 +1,6 @@
 {
   "name": "@gibme/web-ui",
-  "version": "3.0.8",
+  "version": "3.0.10",
   "description": "A simple web-ui helper",
   "main": "./dist/web-ui.js",
   "types": "./dist/web-ui.d.ts",
@@ -15,7 +15,7 @@
     "./smoothiecharts": "./dist/legacy/smoothie.js",
     "./chartjs": "./dist/legacy/chartjs.js",
     "./loadingoverlay": "./dist/legacy/loading.overlay.js",
-    "./websocketclient": "./dist/shims/websocket.js",
+    "./websocketclient": "./dist/legacy/websocket.js",
     "./jquery": "./dist/legacy/jquery.js"
   },
   "typesVersions": {
@@ -48,7 +48,7 @@
         "./dist/legacy/loading.overlay.d.ts"
       ],
       "websocketclient": [
-        "./dist/shims/websocket.d.ts"
+        "./dist/legacy/websocket.d.ts"
       ],
       "jquery": [
         "./dist/legacy/jquery.d.ts"
@@ -101,7 +101,7 @@
       "SmoothieCharts": "./src/legacy/smoothie.ts",
       "ChartJS": "./src/legacy/chartjs.ts",
       "LoadingOverlay": "./src/legacy/loading.overlay.ts",
-      "WebSocketClient": "./src/shims/websocket.ts",
+      "WebSocketClient": "./src/legacy/websocket.ts",
       "JQuery": "./src/legacy/jquery.ts"
     },
     "enablePlugins": {
@@ -135,6 +135,7 @@
     "@gibme/local-storage": "^1.0.10",
     "@gibme/qrcode": "^1.0.1",
     "@gibme/timer": "^1.0.11",
+    "@gibme/websocket": "^1.0.12",
     "@popperjs/core": "^2.11.8",
     "@types/bootstrap": "^5.2.10",
     "@types/google.fonts": "^1.0.5",
