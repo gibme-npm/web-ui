@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
-import Overlay, { Types as OverlayTypes } from '../modules/overlay';
+import type { Overlay, Options, Action } from '@gibme/overlay';
+import { version, JSDELIVR } from '../helpers/cdn';
 
 declare global {
     interface JQuery {
@@ -34,48 +34,57 @@ declare global {
          * @param action
          * @param options
          */
-        overlay(
-            action: OverlayTypes.Action,
-            options?: OverlayTypes.Options
-        ): JQuery;
+        overlay(action: Action, options?: Options): JQuery;
     }
 
     interface JQueryStatic {
         /**
-         * Returns if the overlay is open
+         * Returns if the overlay for is open
          */
         isOverlayOpen(): boolean;
 
         /**
-         * Displays an overlay over the page
+         * Displays an overlay over the element
          *
          * @param action
          * @param options
          */
-        overlay(
-            action: OverlayTypes.Action,
-            options?: OverlayTypes.Options
-        ): JQuery;
+        overlay(action: Action, options?: Options): JQuery;
+    }
+
+    interface Window {
+        Overlay: typeof Overlay;
     }
 }
 
-$.isOverlayOpen = function (): boolean {
-    return Overlay.isOpen($(document.body));
-};
+($ => {
+    const setup = () => {
+        $.fn.isOverlayOpen = function (): boolean {
+            return window.Overlay.isOpen($(this));
+        };
 
-$.overlay = function (action: OverlayTypes.Action, options: OverlayTypes.Options = {}): JQuery {
-    return Overlay.handle($(document.body), action, options);
-};
+        $.fn.overlay = function (action: Action, options: Options = {}): JQuery {
+            return window.Overlay.handle($(this), action, options);
+        };
 
-$.fn.extend({
-    isOverlayOpen: function (): boolean {
-        const parent = $(this) as JQuery<HTMLElement>;
+        $.isOverlayOpen = (): boolean => {
+            return $(document.body).isOverlayOpen();
+        };
 
-        return Overlay.isOpen(parent);
-    },
-    overlay: function (action: OverlayTypes.Action, options: OverlayTypes.Options = {}): JQuery {
-        const parent = $(this) as JQuery<HTMLElement>;
+        $.overlay = (action: Action, options: Options = {}): JQuery => {
+            return $(document.body).overlay(action, options);
+        };
+    };
 
-        return Overlay.handle(parent, action, options);
+    if (typeof window.Overlay === 'undefined') {
+        $.getScript({
+            url: `${JSDELIVR}/@gibme/overlay@${version('@gibme/overlay')}/dist/Overlay.min.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
     }
-});
+})(window.$);
+
+export {};

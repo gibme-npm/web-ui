@@ -18,125 +18,137 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
-import { Buffer } from 'buffer';
-import type { Options, QRCodeInstance as QRCode } from '@gibme/qrcode';
-import './html';
-import './fetch';
+import type { Options, QRCode } from '@gibme/qrcode';
+import { version, JSDELIVR } from '../helpers/cdn';
+import { Buffer } from '../modules/buffer';
 
 declare global {
     interface JQuery {
-        qrCode(text: string, options: Partial<Options>): JQuery
+        /**
+         * Fetches a QR Code created with the specified options and either updates
+         * the element in place, replaces the element, or draws it in the canvas
+         *
+         * Note: only <img>, <svg>, and <canvas> elements are supported at this time
+         */
+        qrCode(text: string, options?: Partial<Options>): Promise<JQuery>
     }
 
-    interface JQueryStatic {
-        qrCode(text: string, options: Partial<Options>): QRCode;
+    interface Window {
+        QRCode: typeof QRCode;
     }
 }
 
-$.qrCode = function (text: string, options: Partial<Options> = {}): QRCode {
-    if (!window.QRCode) throw new Error('QRCode not loaded');
+($ => {
+    const setup = () => {
+        $.fn.qrCode = async function (text: string, options: Partial<Options> = {}): Promise<JQuery> {
+            const $this = $(this);
+            options.size ??= $this.width();
 
-    return window.QRCode(text, options);
-};
-
-$.fn.extend({
-    qrCode: async function (text: string, options: Partial<Options> = {}) {
-        const $this = $(this);
-        options.size ??= $this.width();
-
-        if ($this.is('img') || $this.is('canvas')) {
-            options.format = 'png';
-        } else if ($this.is('svg')) {
-            options.format = 'svg';
-        } else {
-            throw new Error('Unsupported element for QR Code');
-        }
-
-        const code = $.qrCode(text, options);
-
-        const response = await $.fetch(code.base_url, {
-            method: 'POST',
-            json: code.options
-        });
-
-        if (!response.ok) {
-            throw new Error('Could not fetch QR Code Image');
-        }
-
-        const blob = await response.blob();
-
-        const [type, buffer] = [blob.type, Buffer.from(await blob.arrayBuffer())];
-
-        if (options.format === 'png' && $this.is('img')) {
-            return new Promise((resolve, reject) => {
-                $this.attr(
-                    'src',
-                    `data:${type};base64,${buffer.toString('base64')}`)
-                    .one('load', () => resolve($this))
-                    .one('error', () => reject(new Error('An unknown error occurred')));
-            });
-        } else if (options.format === 'svg' && $this.is('svg')) {
-            const elem = $(buffer.toString());
-            const elem_attrs = (() => {
-                const attributes: string[][] = [];
-
-                $.each(elem.element<SVGImageElement>().attributes, function () {
-                    if (this.name === 'width' || this.name === 'height') return;
-
-                    attributes.push([this.name, this.value]);
-                });
-
-                return attributes;
-            })();
-
-            // copy the current element's attributes to our new element
-            $.each($this.element<SVGImageElement>().attributes, function () {
-                elem.attr(this.name, this.value);
-            });
-
-            // copy back over the new elements attributes
-            for (const [name, value] of elem_attrs) {
-                elem.attr(name, value);
+            if ($this.is('img') || $this.is('canvas')) {
+                options.format = 'png';
+            } else if ($this.is('svg')) {
+                options.format = 'svg';
+            } else {
+                throw new Error('Unsupported element for QR Code');
             }
 
-            $this.replaceWith(elem);
+            const code = window.QRCode(text, options);
 
-            return elem;
-        } else if (options.format === 'png' && $this.is('canvas')) {
-            return new Promise((resolve, reject) => {
-                const image = new Image();
-                image.src = `data:${type};base64,${buffer.toString('base64')}`;
-                image.onerror = (_event, _source, _lineno, _colno, error) => {
-                    if (error) {
-                        return reject(error);
-                    }
-
-                    return reject(new Error('An unknown error occurred'));
-                };
-                image.onload = () => {
-                    const canvas = $this.element<HTMLCanvasElement>();
-                    const context = canvas.getContext('2d');
-
-                    if (!context) {
-                        return reject(new Error('Could not get canvas 2d context'));
-                    }
-
-                    const scale = Math.min(canvas.width / image.width, canvas.height / image.height);
-
-                    const [x, y] = [
-                        (canvas.width - image.width * scale) / 2,
-                        (canvas.height - image.width * scale) / 2
-                    ];
-
-                    context.clearRect(0, 0, canvas.width, canvas.height);
-                    context.drawImage(image,
-                        0, 0, image.width, image.height,
-                        x, y, image.width * scale, image.height * scale);
-
-                    return resolve($this);
-                };
+            const response = await $.fetch(code.base_url, {
+                method: 'POST',
+                json: code.options
             });
-        }
+
+            if (!response.ok) {
+                throw new Error('Could not fetch QR Code Image');
+            }
+
+            const blob = await response.blob();
+
+            const buffer = Buffer.from(await blob.arrayBuffer(), blob.type);
+
+            if (options.format === 'png' && $this.is('img')) {
+                return new Promise((resolve, reject) => {
+                    $this.attr('src', buffer.toString('inline-base64'))
+                        .one('load', () => resolve($this))
+                        .one('error', () => reject(new Error('An unknown error occurred')));
+                });
+            } else if (options.format === 'svg' && $this.is('svg')) {
+                const elem = $(buffer.toString());
+                const elem_attrs = (() => {
+                    const attributes: string[][] = [];
+
+                    $.each(elem.element<SVGImageElement>().attributes, function () {
+                        if (this.name === 'width' || this.name === 'height') return;
+
+                        attributes.push([this.name, this.value]);
+                    });
+
+                    return attributes;
+                })();
+
+                // copy the current element's attributes to our new element
+                $.each($this.element<SVGImageElement>().attributes, function () {
+                    elem.attr(this.name, this.value);
+                });
+
+                // copy back over the new elements attributes
+                for (const [name, value] of elem_attrs) {
+                    elem.attr(name, value);
+                }
+
+                $this.replaceWith(elem);
+
+                return elem;
+            } else if (options.format === 'png' && $this.is('canvas')) {
+                return new Promise((resolve, reject) => {
+                    const image = new Image();
+                    image.src = buffer.toString('inline-base64');
+                    image.onerror = (_event, _source, _lineno, _colno, error) => {
+                        if (error) {
+                            return reject(error);
+                        }
+
+                        return reject(new Error('An unknown error occurred'));
+                    };
+                    image.onload = () => {
+                        const canvas = $this.element<HTMLCanvasElement>();
+                        const context = canvas.getContext('2d');
+
+                        if (!context) {
+                            return reject(new Error('Could not get canvas 2d context'));
+                        }
+
+                        const scale = Math.min(canvas.width / image.width, canvas.height / image.height);
+
+                        const [x, y] = [
+                            (canvas.width - image.width * scale) / 2,
+                            (canvas.height - image.width * scale) / 2
+                        ];
+
+                        context.clearRect(0, 0, canvas.width, canvas.height);
+                        context.drawImage(image,
+                            0, 0, image.width, image.height,
+                            x, y, image.width * scale, image.height * scale);
+
+                        return resolve($this);
+                    };
+                });
+            } else {
+                throw new Error('Unsupported element type');
+            }
+        };
+    };
+
+    if (typeof window.QRCode === 'undefined') {
+        $.getScript({
+            url: `${JSDELIVR}/@gibme/qrcode@${version('@gibme/qrcode')}/dist/QRCode.bundle.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
     }
-});
+})(window.$);
+
+export {};

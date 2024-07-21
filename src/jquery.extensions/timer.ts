@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
-import Timer, { AsyncTimer, SyncTimer } from '@gibme/timer';
+import type { AsyncTimer, SyncTimer, Timer } from '@gibme/timer';
+import { version, JSDELIVR } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -30,7 +30,7 @@ declare global {
          * @param interval
          * @param autoStart
          */
-        asyncTimer<Type = any>(func: () => Promise<Type>, interval: number, autoStart?: boolean): AsyncTimer;
+        asyncTimer<T = any>(func: () => Promise<T>, interval: number, autoStart?: boolean): AsyncTimer;
 
         /**
          * A helper class that performs a sync function at the given interval and emits the result on a regular basis
@@ -39,35 +39,54 @@ declare global {
          * @param interval
          * @param autoStart
          */
-        syncTimer<Type = any>(func: () => Type, interval: number, autoStart?: boolean): SyncTimer;
+        syncTimer<T = any>(func: () => T, interval: number, autoStart?: boolean): SyncTimer;
 
         /**
          * Creates a new timer instance
          *
          * @param interval
          * @param autostart
-         * @param args
+         * @param args are emitted with each tick event
          */
         timer(interval: number, autostart?: boolean, ...args: any[]): Timer;
     }
+
+    interface Window {
+        AsyncTimer: typeof AsyncTimer;
+        SyncTimer: typeof SyncTimer;
+        Timer: typeof Timer;
+    }
 }
 
-$.asyncTimer = function <Type = any> (
-    func: () => Promise<Type>,
-    interval: number,
-    autoStart = false
-): AsyncTimer {
-    return new AsyncTimer<Type>(func, interval, autoStart);
-};
+($ => {
+    const setup = () => {
+        $.asyncTimer = <T = any>(
+            func: () => Promise<T>,
+            interval: number,
+            autoStart = false
+        ): AsyncTimer => new window.AsyncTimer(func, interval, autoStart);
 
-$.syncTimer = function <Type = any> (
-    func: () => Type,
-    interval: number,
-    autoStart = false
-): SyncTimer {
-    return new SyncTimer<Type>(func, interval, autoStart);
-};
+        $.syncTimer = <T = any>(
+            func: () => T,
+            interval: number,
+            autoStart = false
+        ): SyncTimer => new window.SyncTimer(func, interval, autoStart);
 
-$.timer = function (interval: number, autostart = false, ...args: any[]): Timer {
-    return new Timer(interval, autostart, ...args);
-};
+        $.timer = (interval: number, autoStart = false): Timer => new window.Timer(interval, autoStart);
+    };
+
+    if (typeof window.AsyncTimer === 'undefined' ||
+        typeof window.SyncTimer === 'undefined' ||
+        typeof window.Timer === 'undefined'
+    ) {
+        $.getScript({
+            url: `${JSDELIVR}/@gibme/timer@${version('@gibme/timer')}/dist/timer.min.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
+    }
+})(window.$);
+
+export {};

@@ -18,21 +18,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/**
+ * We need to attach these to jQuery as quickly as possible
+ */
 import './chartjs';
 import './datatables';
 import './fetch';
 import './fontawesome';
 import './google';
-import './helpers';
 import './hls';
 import './html';
 import './local-storage';
+import './modal';
 import './moment';
 import './numeral';
 import './overlay';
 import './qrcode';
 import './remotes';
+import './simplewebauthn';
+import './sleep';
 import './smoothiechart';
+import './status-modal';
 import './timer';
 import './websocket';
-import './uuid';
+
+export {};

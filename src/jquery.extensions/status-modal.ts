@@ -18,25 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { load_script } from '../helpers/loaders';
-import type { QRCode } from '@gibme/qrcode';
+import { StatusModal } from '../modules/modal';
 
 declare global {
-    interface Window {
-        QRCode?: typeof QRCode;
+    interface JQueryStatic {
+        /**
+         * A wrapper around the global modal interface that automatically handles
+         * passing an error or some type directly in as the body and renders that
+         * error in a human-readable form
+         */
+        statusModal(): typeof StatusModal;
     }
 }
 
-const load_qrcode = async (): Promise<boolean> => {
-    try {
-        await load_script(
-            'https://cdn.jsdelivr.net/npm/@gibme/qrcode@1.0.1/dist/QRCode.bundle.js',
-            false
-        );
-        return true;
-    } catch {
-        return false;
+($ => {
+    if (typeof $.statusModal === 'undefined') {
+        $.statusModal = () => StatusModal;
     }
-};
+})(window.$);
 
-export default load_qrcode;
+export {};

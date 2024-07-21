@@ -18,9 +18,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import hook_dom_load from '../helpers/hook_dom_load';
-import load_bootstrap from '../loaders/bootstrap';
+declare global {
+    interface JQueryStatic {
+        /**
+         * Sleeps for the specified timeout period
+         *
+         * @param ms
+         */
+        sleep(ms: number): Promise<void>;
+    }
+}
 
-hook_dom_load(async () => {
-    await load_bootstrap();
-});
+($ => {
+    $.sleep = async (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+})(window.$);
+
+export {};

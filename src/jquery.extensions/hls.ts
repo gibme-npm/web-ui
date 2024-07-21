@@ -18,10 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
 // eslint-disable-next-line import/no-named-default
-import type { default as HLS, HlsConfig as HLSConfig } from 'hls.js';
-import { HTML } from '../types';
+import type { HlsConfig, default as Hls } from 'hls.js';
+import type { HTML } from '../types';
+import { version, CDNJS } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -38,30 +38,57 @@ declare global {
         createHLSMedia(
             src: string,
             options?: Partial<HTML.Video.Options>,
-            hlsConfig?: Partial<HLSConfig>
-        ): [JQuery<HTMLMediaElement>, HLS];
+            hlsConfig?: Partial<HlsConfig>
+        ): [JQuery<HTMLMediaElement>, Hls];
+
+        /**
+         * Creates a new instance of Hls.js using the supplied configuration parameters
+         *
+         * @param config
+         */
+        hls(config: Partial<HlsConfig>): Hls;
+    }
+
+    interface Window {
+        Hls: typeof Hls;
     }
 }
 
-$.createHLSMedia = function (
-    src: string,
-    options: Partial<HTML.Video.Options> = {},
-    hlsConfig: Partial<HLSConfig> = {}
-): [JQuery<HTMLMediaElement>, HLS] {
-    if (!window.Hls) throw new Error('Hls.js not loaded');
+($ => {
+    const setup = () => {
+        $.createHLSMedia = (
+            src: string,
+            options: Partial<HTML.Video.Options> = {},
+            hlsConfig: Partial<HlsConfig> = {}
+        ): [JQuery<HTMLMediaElement>, Hls] => {
+            const hls = new window.Hls(hlsConfig);
 
-    const hls = new window.Hls(hlsConfig);
+            const elem = $.createMedia(undefined, options);
 
-    const element = $.createMedia(undefined, options);
+            hls.loadSource(src);
+            hls.attachMedia(elem[0]);
 
-    hls.loadSource(src);
-    hls.attachMedia(element[0]);
+            if (options.autoplay) {
+                hls.on(window.Hls.Events.MEDIA_ATTACHED, () => {
+                    elem.trigger('play');
+                });
+            }
 
-    if (options.autoplay) {
-        hls.on(window.Hls.Events.MEDIA_ATTACHED, () => {
-            element.trigger('play');
+            return [elem, hls];
+        };
+
+        $.hls = (config: Partial<HlsConfig> = {}) => new window.Hls(config);
+    };
+
+    if (typeof window.Hls === 'undefined') {
+        $.getScript({
+            url: `${CDNJS}/hls.js/${version('hls.js')}/hls.min.js`,
+            cache: true,
+            success: () => setup()
         });
+    } else {
+        setup();
     }
+})(window.$);
 
-    return [element, hls];
-};
+export {};

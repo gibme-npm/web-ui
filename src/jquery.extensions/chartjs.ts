@@ -18,49 +18,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
-import type { Chart as ChartJSType, ChartConfiguration } from 'chart.js';
-import './html';
+import type { Chart, ChartConfiguration } from 'chart.js';
+import { version, CDNJS } from '../helpers/cdn';
 
 declare global {
     interface JQuery {
         /**
          * Initialises a new Chart.js instance
          *
-         * @param options
+         * @param config
          */
-        chartJS(options: ChartConfiguration): ChartJSType;
+        chartJS(config: ChartConfiguration): Chart;
     }
 
-    interface JQueryStatic {
-        /**
-         * Initialises a new Chart.js instance
-         *
-         * @param canvas
-         * @param options
-         */
-        chartJS(canvas: JQuery<HTMLCanvasElement>, options: ChartConfiguration): ChartJSType;
+    interface Window {
+        Chart: typeof Chart;
     }
 }
 
-{
-    const charts = new Map<string, ChartJSType>();
+const charts = new Map<string, Chart>();
 
-    $.chartJS = function (canvas: JQuery<HTMLCanvasElement>, options: ChartConfiguration): ChartJSType {
-        if (!window.Chart) throw new Error('Chart.js not loaded');
+($ => {
+    const setup = () => {
+        $.fn.chartJS = function (config: ChartConfiguration): Chart {
+            const canvas = $(this) as JQuery<HTMLCanvasElement>;
 
-        const chart = charts.get(canvas.id()) || new window.Chart(canvas.element<HTMLCanvasElement>(), options);
+            const chart = charts.get(canvas.id()) || new window.Chart(
+                canvas.element<HTMLCanvasElement>(), config);
 
-        charts.set(canvas.id(), chart);
+            charts.set(canvas.id(), chart);
 
-        return chart;
+            return chart;
+        };
     };
-}
 
-$.fn.extend({
-    chartJS: function (options: ChartConfiguration): ChartJSType {
-        const canvas = $(this) as JQuery<HTMLCanvasElement>;
-
-        return $.chartJS(canvas, options);
+    if (typeof window.Chart === 'undefined') {
+        $.getScript({
+            url: `${CDNJS}/Chart.js/${version('chart.js')}/chart.umd.min.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
     }
-});
+})(window.$);
+
+export {};

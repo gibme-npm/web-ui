@@ -18,11 +18,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
 import type { IChartOptions, ITimeSeriesOptions, SmoothieChart, TimeSeries } from 'smoothie';
-import './html';
+import { version, CDNJS } from '../helpers/cdn';
 
 declare global {
+    interface JQueryStatic {
+        /**
+         * Initialises a new TimeSeries with optional data options.
+         *
+         * @param seriesOptions
+         */
+        timeSeries(seriesOptions?: ITimeSeriesOptions): TimeSeries;
+    }
+
     interface JQuery {
         /**
          * Initialises a new SmoothieChart
@@ -33,61 +41,43 @@ declare global {
         smoothieChart(chartOptions?: IChartOptions, delayMillis?: number): SmoothieChart;
     }
 
-    interface JQueryStatic {
-        /**
-         * Initialises a new SmoothieChart
-         *
-         * @param canvas
-         * @param chartOptions
-         * @param delayMillis
-         */
-        smoothieChart(
-            canvas: JQuery<HTMLCanvasElement>,
-            chartOptions?: IChartOptions,
-            delayMillis?: number
-        ): SmoothieChart;
-
-        /**
-         * Initialises a new TimeSeries with optional data options.
-         *
-         * @param seriesOptions
-         */
-        timeSeries(seriesOptions?: ITimeSeriesOptions): TimeSeries;
+    interface Window {
+        TimeSeries: typeof TimeSeries;
+        SmoothieChart: typeof SmoothieChart;
     }
 }
 
-{
-    const charts = new Map<string, SmoothieChart>();
+const charts = new Map<string, SmoothieChart>();
 
-    $.smoothieChart = function (
-        canvas: JQuery<HTMLCanvasElement>,
-        chartOptions?: IChartOptions,
-        delayMillis?: number
-    ): SmoothieChart {
-        if (!window.SmoothieChart) throw new Error('SmoothieCharts not loaded');
+($ => {
+    const setup = () => {
+        $.timeSeries = (options: ITimeSeriesOptions): TimeSeries =>
+            new window.TimeSeries(options);
 
-        const chart = charts.get(canvas.id()) || (() => {
-            const chart = new window.SmoothieChart(chartOptions);
-            chart.streamTo(canvas.element<HTMLCanvasElement>(), delayMillis);
+        $.fn.smoothieChart = function (options: IChartOptions = {}, delayMillis?: number): SmoothieChart {
+            const canvas = $(this) as JQuery<HTMLCanvasElement>;
+
+            const chart = charts.get(canvas.id()) || (() => {
+                const chart = new window.SmoothieChart(options);
+                chart.streamTo(canvas.element(), delayMillis);
+                return chart;
+            })();
+
+            charts.set(canvas.id(), chart);
+
             return chart;
-        })();
-
-        charts.set(canvas.id(), chart);
-
-        return chart;
+        };
     };
-}
 
-$.timeSeries = function (seriesOptions?: ITimeSeriesOptions): TimeSeries {
-    if (!window.TimeSeries) throw new Error('SmoothieCharts.TimeSeries not loaded');
-
-    return new window.TimeSeries(seriesOptions);
-};
-
-$.fn.extend({
-    smoothieChart: function (chartOptions?: IChartOptions, delayMillis?: number): SmoothieChart {
-        const canvas = $(this) as JQuery<HTMLCanvasElement>;
-
-        return $.smoothieChart(canvas, chartOptions, delayMillis);
+    if (typeof window.TimeSeries === 'undefined' || typeof window.SmoothieChart === 'undefined') {
+        $.getScript({
+            url: `${CDNJS}/smoothie/${version('smoothie')}/smoothie.min.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
     }
-});
+})(window.$);
+
+export {};

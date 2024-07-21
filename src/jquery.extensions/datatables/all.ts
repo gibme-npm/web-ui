@@ -18,17 +18,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { load_css } from '../helpers/loaders';
-
-const load_fontawesome = async (): Promise<boolean> => {
-    try {
-        await load_css(
-            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css',
-            'sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==');
-        return true;
-    } catch {
-        return false;
-    }
-};
-
-export default load_fontawesome;
+import './autofill';
+import './buttons';
+import './colreorder';
+import './fixedheader';
+import './keytable';
+import './responsive';
+import './rowgroup';
+import './rowreorder';
+import './scroller';
+import './select';

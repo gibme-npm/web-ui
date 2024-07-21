@@ -3,7 +3,7 @@
   "excludeExternals": true,
   "excludePrivate": true,
   "entryPoints": [
-    "./src/web-ui.ts"
+    "./src/index.ts"
   ],
   "disableSources": true,
   "hideGenerator": true,

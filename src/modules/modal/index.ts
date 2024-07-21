@@ -18,25 +18,5 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { load_script } from '../helpers/loaders';
-// eslint-disable-next-line import/no-named-default
-import type { default as WebSocketClient } from '@gibme/websocket';
-
-declare global {
-    interface Window {
-        WebSocketClient?: typeof WebSocketClient;
-    }
-}
-
-const load_websocket = async (): Promise<boolean> => {
-    try {
-        await load_script(
-            'https://cdn.jsdelivr.net/npm/@gibme/websocket@1.0.12/dist/websocket.min.js'
-        );
-        return true;
-    } catch {
-        return false;
-    }
-};
-
-export default load_websocket;
+export * from './modal';
+export * from './status-modal';

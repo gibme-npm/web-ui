@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,27 +18,40 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { load_script } from '../helpers/loaders';
-import type { SmoothieChart, TimeSeries } from 'smoothie';
+// eslint-disable-next-line import/no-named-default
+import type { default as SimpleWebAuthnBrowser } from '@simplewebauthn/browser';
+import { version, JSDELIVR } from '../helpers/cdn';
 
 declare global {
+    interface JQueryStatic {
+        /**
+         * The @simplewebauthn/browser module interface
+         *
+         * See: https://simplewebauthn.dev/docs/packages/browser
+         */
+        webauthn(): typeof SimpleWebAuthnBrowser;
+    }
+
     interface Window {
-        SmoothieChart?: typeof SmoothieChart;
-        TimeSeries?: typeof TimeSeries;
+        SimpleWebAuthnBrowser: typeof SimpleWebAuthnBrowser;
     }
 }
 
-const load_smoothiecharts = async (): Promise<boolean> => {
-    try {
-        await load_script(
-            'https://cdnjs.cloudflare.com/ajax/libs/smoothie/1.34.0/smoothie.min.js',
-            false,
-            'sha512-PNAPdJIoyrliVDPtSFYtH9pFQyeTxofjm3vAueqtsduqKqMCaMIiJcGzMYECbnep0sT0qdqWemVbSm2h86NdjQ=='
-        );
-        return true;
-    } catch {
-        return false;
-    }
-};
+($ => {
+    const setup = () => {
+        $.webauthn = () => window.SimpleWebAuthnBrowser;
+    };
 
-export default load_smoothiecharts;
+    if (typeof window.SimpleWebAuthnBrowser === 'undefined') {
+        $.getScript({
+            // eslint-disable-next-line max-len
+            url: `${JSDELIVR}/@simplewebauthn/browser@${version('@simplewebauthn/browser')}/dist/bundle/index.umd.min.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
+    }
+})(window.$);
+
+export {};

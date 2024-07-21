@@ -18,9 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
-// eslint-disable-next-line import/no-named-default
-import type { default as WebSocketClient, WebSocketClientOptions } from '@gibme/websocket';
+import type { WebSocketClientOptions, WebSocketClient } from '@gibme/websocket';
+import { version, JSDELIVR } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -29,12 +28,29 @@ declare global {
          *
          * @param options
          */
-        websocket(options: WebSocketClientOptions): WebSocketClientOptions;
+        websocket(options: WebSocketClientOptions): WebSocketClient;
+    }
+
+    interface Window {
+        WebSocketClient: typeof WebSocketClient;
     }
 }
 
-$.websocket = function (options: WebSocketClientOptions): WebSocketClient {
-    if (!window.WebSocketClient) throw new Error('WebSocketClient not loaded');
+($ => {
+    const setup = () => {
+        $.websocket = (options: WebSocketClientOptions): WebSocketClient =>
+            new window.WebSocketClient(options);
+    };
 
-    return new window.WebSocketClient(options);
-};
+    if (typeof window.WebSocketClient === 'undefined') {
+        $.getScript({
+            url: `${JSDELIVR}/@gibme/websocket@${version('@gibme/websocket')}/dist/websocket.min.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
+    }
+})(window.$);
+
+export {};

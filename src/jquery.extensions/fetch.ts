@@ -18,9 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
-import type { Cookie, CookieJar, FetchInit } from '@gibme/fetch';
+import type { Cookie, CookieJar, FetchInit, FetchInterface, Response } from '@gibme/fetch';
 import type { Store as CookieStore } from 'tough-cookie';
+import { version, JSDELIVR } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -44,22 +44,38 @@ declare global {
          */
         fetch(url: string, init?: FetchInit): Promise<Response>;
     }
+
+    interface Window {
+        Cookie: typeof Cookie;
+        CookieJar: typeof CookieJar;
+        Fetch: FetchInterface;
+    }
 }
 
-$.cookie = function (properties?: Cookie.Properties): Cookie {
-    if (!window.Cookie) throw new Error('Fetch.Cookie not loaded');
+($ => {
+    const setup = () => {
+        $.cookie = (properties?: Cookie.Properties): Cookie =>
+            new window.Cookie(properties);
 
-    return new window.Cookie(properties);
-};
+        $.cookieJar = (store?: CookieStore, options?: CookieJar.Options): CookieJar =>
+            new window.CookieJar(store, options);
 
-$.cookieJar = function (store?: CookieStore, options?: CookieJar.Options): CookieJar {
-    if (!window.CookieJar) throw new Error('Fetch.CookieJar not loaded');
+        $.fetch = async (url: string, init?: FetchInit): Promise<Response> =>
+            window.Fetch(url, init);
+    };
 
-    return new window.CookieJar(store, options);
-};
+    if (typeof window.Fetch === 'undefined' ||
+        typeof window.Cookie === 'undefined' ||
+        typeof window.CookieJar === 'undefined'
+    ) {
+        $.getScript({
+            url: `${JSDELIVR}/@gibme/fetch@${version('@gibme/fetch')}/dist/Fetch.bundle.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
+    }
+})(window.$);
 
-$.fetch = function (url: string, init: FetchInit = {}): Promise<Response> {
-    if (!window.Fetch) throw new Error('Fetch not loaded');
-
-    return window.Fetch(url, init);
-};
+export {};

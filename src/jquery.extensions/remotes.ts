@@ -18,8 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
-import './fetch';
 import type { Remotes } from '../types';
 
 declare global {
@@ -32,34 +30,63 @@ declare global {
          * @param address
          */
         ipInfo(address?: string): Promise<Remotes.Results.IPInfo | undefined>;
+
+        /**
+         * Retrieves information regarding the US zip code supplied if such information is available
+         *
+         * @param zipCode
+         */
+        zipInfo(zipCode: string): Promise<Remotes.Results.ZipInfo | undefined>;
     }
 }
 
-$.ipInfo = async function (address?: string): Promise<Remotes.Results.IPInfo | undefined> {
-    const params = new URLSearchParams();
-    params.set('ip', address || '');
+($ => {
+    $.ipInfo = async (address?: string): Promise<Remotes.Results.IPInfo | undefined> => {
+        const params = new URLSearchParams();
+        params.set('ip', address || '');
 
-    const response = await $.fetch(`https://ipinfo.hostmanager.workers.dev/?${params.toString()}`);
+        const response = await $.fetch(`https://ipinfo.hostmanager.workers.dev/?${params.toString()}`);
 
-    if (!response.ok) return;
+        if (!response.ok) return;
 
-    const json: Remotes.Responses.IPInfo = await response.json();
+        const json: Remotes.Responses.IPInfo = await response.json();
 
-    if (json.status !== 'success') return;
+        if (json.status !== 'success') return;
 
-    const [as, ...name] = json.as.split(' ')
-        .map(elem => elem.trim());
+        const [as, ...name] = json.as.split(' ')
+            .map(elem => elem.trim());
 
-    const asn = parseInt(as.replace('AS', '')) || 0;
+        const asn = parseInt(as.replace('AS', '')) || 0;
 
-    delete (json as any).status;
+        const { query } = json;
 
-    return {
-        ...json,
-        org: json.org.length !== 0 ? json.org : undefined,
-        as: {
-            asn,
-            name: name.join(' ')
-        }
-    } as Remotes.Results.IPInfo;
-};
+        delete (json as any).status;
+        delete (json as any).query;
+
+        return {
+            ...json,
+            address: query,
+            org: json.org.length !== 0 ? json.org : undefined,
+            as: {
+                asn,
+                name: name.join(' ')
+            }
+        } as Remotes.Results.IPInfo;
+    };
+
+    $.zipInfo = async (zipCode: string): Promise<Remotes.Results.ZipInfo | undefined> => {
+        const response = await $.fetch(`https://zip.hostmanager.workers.dev/${zipCode}`);
+
+        if (!response.ok) return;
+
+        const json: Remotes.Responses.ZipInfo = await response.json();
+
+        if (json.error) return;
+
+        delete (json as any).error;
+
+        return json;
+    };
+})(window.$);
+
+export {};

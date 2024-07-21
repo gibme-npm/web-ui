@@ -18,25 +18,50 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { load_script } from '../helpers/loaders';
-import type { Chart } from 'chart.js';
+type Event = string;
+type Listener = (...args: any[]) => void | Promise<void>;
 
-declare global {
-    interface Window {
-        Chart?: typeof Chart;
-    }
-}
+/**
+ * A simple EventEmitter shim that provides only the basics
+ */
+export class EventEmitter {
+    private readonly events: Record<Event, Listener[]> = {};
 
-const load_chartjs = async (): Promise<boolean> => {
-    try {
-        await load_script(
-            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
-            false,
-            'sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==');
-        return true;
-    } catch {
+    public emit (event: Event, ...args: any[]): boolean {
+        if (this.events[event]) {
+            this.events[event].forEach(listener =>
+                listener.apply(this, args));
+
+            return true;
+        }
+
         return false;
     }
-};
 
-export default load_chartjs;
+    public on (event: Event, listener: Listener): EventEmitter {
+        if (!this.events[event]) this.events[event] = [];
+
+        this.events[event].push(listener);
+
+        return this;
+    }
+
+    public off (event: Event, listener: Listener): EventEmitter {
+        if (!this.events[event]) return this;
+
+        this.events[event] = this.events[event].filter(check => check !== listener);
+
+        return this;
+    }
+
+    public once (event: Event, listener: Listener): EventEmitter {
+        const wrapper = (...args: any[]) => {
+            listener.apply(this, args);
+            this.off(event, wrapper);
+        };
+
+        this.on(event, wrapper);
+
+        return this;
+    }
+}

@@ -18,27 +18,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { load_script } from '../helpers/loaders';
-import type { Cookie, CookieJar, FetchInterface } from '@gibme/fetch';
+import { Modal } from '../modules/modal';
 
 declare global {
-    interface Window {
-        Cookie?: typeof Cookie;
-        CookieJar?: typeof CookieJar;
-        Fetch?: FetchInterface;
+    interface JQueryStatic {
+        /**
+         * Provides a global modal interface that handles creation of the necessary
+         * DOM elements, styling, etc
+         */
+        modal(): typeof Modal;
     }
 }
 
-const load_fetch = async (): Promise<boolean> => {
-    try {
-        await load_script(
-            'https://cdn.jsdelivr.net/npm/@gibme/fetch@1.0.14/dist/Fetch.bundle.js',
-            false
-        );
-        return true;
-    } catch (error: any) {
-        return false;
+($ => {
+    if (typeof $.modal === 'undefined') {
+        $.modal = () => Modal;
     }
-};
+})(window.$);
 
-export default load_fetch;
+export {};

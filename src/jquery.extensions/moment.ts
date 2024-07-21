@@ -18,9 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
 // eslint-disable-next-line import/no-named-default
-import type { default as moment } from 'moment';
+import type { MomentInput, Moment, default as MomentJS } from 'moment';
+import { version, CDNJS } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -30,10 +30,29 @@ declare global {
          * @param input
          * @param strict
          */
-        moment(input?: moment.MomentInput, strict?: boolean): moment.Moment;
+        moment(input?: MomentInput, strict?: boolean): Moment;
+    }
+
+    interface Window {
+        moment: typeof MomentJS;
     }
 }
 
-$.moment = function (input?: moment.MomentInput, strict?: boolean): moment.Moment {
-    return window.moment(input, strict);
-};
+($ => {
+    const setup = () => {
+        $.moment = (input?: MomentInput, strict?: boolean): Moment =>
+            window.moment(input, strict);
+    };
+
+    if (typeof window.moment === 'undefined') {
+        $.getScript({
+            url: `${CDNJS}/moment.js/${version('moment')}/moment-with-locales.min.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
+    }
+})(window.$);
+
+export {};

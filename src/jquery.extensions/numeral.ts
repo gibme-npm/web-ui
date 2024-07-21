@@ -18,9 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
 // eslint-disable-next-line import/no-named-default
-import type { default as numeral } from 'numeral';
+import type { Numeral, NumeralJSFormat, NumeralJSLocale, RegisterType, default as NumeralJS } from 'numeral';
+import { version, CDNJS } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -29,7 +29,7 @@ declare global {
          *
          * @param input
          */
-        numeral(input?: any): numeral.Numeral;
+        numeral(input?: any): Numeral;
 
         /**
          * This function sets the current locale. If no arguments are passed in,
@@ -47,9 +47,9 @@ declare global {
          * @param value
          */
         numeralRegister(
-            what: numeral.RegisterType,
+            what: RegisterType,
             key: string,
-            value: numeral.NumeralJSFormat | numeral.NumeralJSLocale
+            value: NumeralJSFormat | NumeralJSLocale
         ): void;
 
         /**
@@ -66,48 +66,76 @@ declare global {
          */
         numeralZeroFormat(format: string): void;
     }
+
+    interface Window {
+        numeral: typeof NumeralJS;
+    }
 }
 
-$.numeral = function (input?: any): numeral.Numeral {
-    return window.numeral(input);
-};
+($ => {
+    const ver = version('numeral');
+    const setup = () => {
+        $.numeral = (input?: any): Numeral =>
+            window.numeral(input);
 
-$.numeralLocale = function (locale?: string | 'auto'): string {
-    if (!locale) {
-        return window.numeral.locale();
-    }
+        $.numeralLocale = (locale?: string | 'auto'): string => {
+            const numeral = window.numeral;
 
-    if (locale === 'auto') {
-        const browser = navigator.language.toLowerCase();
+            if (!locale) {
+                return numeral.locale();
+            }
 
-        window.numeral.locale(browser);
+            if (locale === 'auto') {
+                const browser = navigator.language.toLowerCase();
 
-        if (!window.numeral.localeData()) {
-            window.numeral.locale(browser.split('-')[0]);
-        }
+                numeral.locale(browser);
 
-        if (!window.numeral.localeData()) {
-            window.numeral.locale('en');
-        }
+                if (!numeral.localeData()) {
+                    numeral.locale(browser.split('-')[0]);
+                }
+
+                if (!numeral.localeData()) {
+                    numeral.localeData('en');
+                }
+            } else {
+                numeral.locale(locale);
+            }
+
+            return numeral.locale();
+        };
+
+        $.numeralRegister = (
+            what: RegisterType,
+            key: string,
+            value: NumeralJSFormat | NumeralJSLocale
+        ): void => {
+            window.numeral.register(what, key, value);
+        };
+
+        $.numeralNullFormat = (format: string): void => {
+            window.numeral.nullFormat(format);
+        };
+
+        $.numeralZeroFormat = (format: string): void => {
+            window.numeral.zeroFormat(format);
+        };
+    };
+
+    if (typeof window.numeral === 'undefined') {
+        $.getScript({
+            url: `${CDNJS}/numeral.js/${ver}/numeral.min.js`,
+            cache: true,
+            success: () => {
+                $.getScript({
+                    url: `${CDNJS}/numeral.js/${ver}/locales.min.js`,
+                    cache: true,
+                    success: () => setup()
+                });
+            }
+        });
     } else {
-        window.numeral.locale(locale);
+        setup();
     }
+})(window.$);
 
-    return window.numeral.locale();
-};
-
-$.numeralRegister = function (
-    what: numeral.RegisterType,
-    key: string,
-    value: numeral.NumeralJSFormat | numeral.NumeralJSLocale
-): void {
-    window.numeral.register(what, key, value);
-};
-
-$.numeralNullFormat = function (format: string): void {
-    return window.numeral.nullFormat(format);
-};
-
-$.numeralZeroFormat = function (format: string): void {
-    return window.numeral.zeroFormat(format);
-};
+export {};

@@ -18,45 +18,114 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
-import type { Api as DataTablesAPI, Config as DataTableConfig } from 'datatables.net-bs5';
-import './html';
+import type { Config, Api } from 'datatables.net-bs5';
+// eslint-disable-next-line import/no-named-default
+import type { default as JSZip } from 'jszip';
+// eslint-disable-next-line import/no-named-default
+import type { default as pdfMake } from 'pdfmake';
+import './datatables/all';
+import { version, CDNJS } from '../helpers/cdn';
 
 declare global {
-    interface JQueryStatic {
+    interface JQuery {
         /**
-         * Creates a new DataTable (or selects an existing)
+         * Creates a DataTables.net instance on the element
          *
-         * @param id
-         * @param options
+         * @param config
+         * @param buttonContainer if specified, will place the buttons (if enabled) into the container specified
+         * if not specified and buttons are enabled, they will be placed at the top of the table
          */
-        createDataTable<ElementType extends HTMLElement = HTMLElement>(
-            id: string | JQuery<ElementType>,
-            options: DataTableConfig
-        ): DataTablesAPI<ElementType>;
+        dt<T extends HTMLElement = HTMLElement>(config?: Config, buttonContainer?: JQuery<T>): Api;
+    }
+
+    interface Window {
+        pdfMake: typeof pdfMake;
+        JSZip: typeof JSZip;
     }
 }
 
-$.createDataTable = function <ElementType extends HTMLElement = HTMLElement> (
-    id: string | JQuery<ElementType>,
-    options: DataTableConfig = {}
-): DataTablesAPI<ElementType> {
-    if (typeof id === 'string' && !id.startsWith('#')) {
-        id = `#${id}`;
+($ => {
+    const setup = () => {
+        $.fn.dt = function <T extends HTMLElement = HTMLElement> (
+            options: Config = {},
+            buttonContainer?: JQuery<T>
+        ): Api {
+            const $this = $(this);
+            const id = $this.id();
+
+            if (!options.destroy) {
+                options.retrieve ??= true;
+            }
+
+            const table = $this.DataTable(options);
+
+            if (options.buttons) {
+                if (buttonContainer) {
+                    table.buttons().container().appendTo(buttonContainer);
+                } else {
+                    $(`#${id}_wrapper`)
+                        .children(':first')
+                        .children(':first')
+                        .append(table.buttons().container());
+                }
+            }
+
+            return table;
+        };
+    };
+
+    if (typeof $.fn.DataTable === 'undefined' ||
+        typeof window.pdfMake === 'undefined' ||
+        typeof window.JSZip === 'undefined'
+    ) {
+        const pkgs: string = [
+            `jszip-${version('jszip')}`,
+            `dt-${version('datatables.net-bs5')}`,
+            `af-${version('datatables.net-autofill-bs5')}`,
+            `b-${version('datatables.net-buttons-bs5')}`,
+            `b-colvis-${version('datatables.net-buttons-bs5')}`,
+            `b-html5-${version('datatables.net-buttons-bs5')}`,
+            `b-print-${version('datatables.net-buttons-bs5')}`,
+            `cr-${version('datatables.net-colreorder-bs5')}`,
+            `date-${version('datatables.net-datetime')}`,
+            `fc-${version('datatables.net-fixedcolumns-bs5')}`,
+            `fh-${version('datatables.net-fixedheader-bs5')}`,
+            `kt-${version('datatables.net-keytable-bs5')}`,
+            `r-${version('datatables.net-responsive-bs5')}`,
+            `rg-${version('datatables.net-rowgroup-bs5')}`,
+            `rr-${version('datatables.net-rowreorder-bs5')}`,
+            `sc-${version('datatables.net-scroller-bs5')}`,
+            `sb-${version('datatables.net-searchbuilder-bs5')}`,
+            `sp-${version('datatables.net-searchpanes-bs5')}`,
+            `sl-${version('datatables.net-select-bs5')}`,
+            `sr-${version('datatables.net-staterestore-bs5')}`
+        ].join('/');
+        const pdf = version('pdfmake');
+
+        $('<link rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer">')
+            .appendTo($(document.head))
+            .attr('href', `https://cdn.datatables.net/v/bs5/${pkgs}/datatables.min.css`);
+
+        $.getScript({
+            url: `${CDNJS}/pdfmake/${pdf}/pdfmake.min.js`,
+            cache: true,
+            success: () => {
+                $.getScript({
+                    url: `${CDNJS}/pdfmake/${pdf}/vfs_fonts.min.js`,
+                    cache: true,
+                    success: () => {
+                        $.getScript({
+                            url: `https://cdn.datatables.net/v/bs5/${pkgs}/datatables.min.js`,
+                            cache: true,
+                            success: () => setup()
+                        });
+                    }
+                });
+            }
+        });
+    } else {
+        setup();
     }
+})(window.$);
 
-    const elem = ((typeof id === 'string') ? $(`${id}`) : id);
-
-    if (!options.destroy) {
-        options.retrieve ??= true;
-    }
-
-    const table = elem.DataTable(options);
-
-    if (options.buttons) {
-        table.buttons().container()
-            .appendTo(`#${elem.id()}_wrapper .col-md-6:eq(0)`);
-    }
-
-    return table;
-};
+export {};

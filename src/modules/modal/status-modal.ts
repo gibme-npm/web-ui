@@ -18,48 +18,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
-import ModalHelper from './modal';
+import { Modal } from './modal';
+import { StatusModalTypes } from './types';
+import Options = StatusModalTypes.Options;
+export * from './types';
 
-/**
- * Describes status modal options
- */
-export interface StatusModalOptions {
+export default abstract class StatusModal extends Modal {
     /**
-     * The title to use for the status modal
-     */
-    title: string;
-    /**
-     * The message to display
-     */
-    body: any;
-    /**
-     * The message footer to display
-     */
-    footer: string;
-    /**
-     * A timeout wherein the modal will auto hide
-     */
-    timeout: number;
-    /**
-     * The class to apply to the title
-     */
-    class: string;
-    /**
-     * Whether we display the default close button in the upper right of the modal
-     */
-    useDefaultCloseButton: boolean;
-}
-
-export default abstract class StatusModal extends ModalHelper {
-    /**
-     * Displays a modal with jquery using the supplied elements, message, and style
+     * Displays a modal using the supplied elements, message, and style
      *
      * @param options
      */
-    public static show (
-        options: Partial<StatusModalOptions> = {}
-    ) {
+    public static show (options: Partial<Options> = {}): JQuery {
         options.title ??= 'New Message!';
 
         if (options.body.data && options.body.data.message) {
@@ -68,40 +38,29 @@ export default abstract class StatusModal extends ModalHelper {
             options.body = options.body.message;
         }
 
-        let final_message = options.body.toString();
+        let message = options.body.toString();
 
         // Web3 helpers
         // eslint-disable-next-line no-lone-blocks
         {
-            const lower = final_message.toLowerCase();
+            const lower = message.toLowerCase();
 
             if (lower.includes('while formatting outputs') ||
                 lower.includes('internal error') ||
                 lower.includes('header not found')) {
-                final_message = 'Internal wallet error, please try again.';
+                message = 'Internal wallet error, please try again.';
             }
 
-            final_message = final_message.replace('execution reverted:', '').trim();
+            message = message.replace('execution reverted:', '').trim();
         }
 
-        const body = $('<div>')
-            .addClass('alert')
-            .text(final_message);
-
-        const _title = $('<span>')
-            .addClass('alert')
-            .text(options.title);
-
-        if (options.class) {
-            _title.addClass(options.class);
-        }
-
-        ModalHelper.open({
-            title: _title,
-            body,
-            footer: options.footer,
+        return this.open({
+            title: $('<span>').addClass(`${options.titleClass}`).text(options.title),
+            body: $('<div>').addClass(`${options.bodyClass}`).text(message),
             timeout: options.timeout,
             useDefaultCloseButton: options.useDefaultCloseButton
         });
     }
 }
+
+export { StatusModal };

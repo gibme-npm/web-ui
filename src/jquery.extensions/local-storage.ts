@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import $ from 'jquery';
-import LocalStorage from '@gibme/local-storage';
+import type { LocalStorage } from '@gibme/local-storage';
+import { version, JSDELIVR } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -28,8 +28,26 @@ declare global {
          */
         localStorage(): typeof LocalStorage;
     }
+
+    interface Window {
+        LocalStorage: typeof LocalStorage;
+    }
 }
 
-$.localStorage = function (): typeof LocalStorage {
-    return LocalStorage;
-};
+($ => {
+    const setup = () => {
+        $.localStorage = (): typeof LocalStorage => window.LocalStorage;
+    };
+
+    if (typeof window.LocalStorage === 'undefined') {
+        $.getScript({
+            url: `${JSDELIVR}/@gibme/local-storage@${version('@gibme/local-storage')}/dist/local-storage.min.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
+    }
+})(window.$);
+
+export {};

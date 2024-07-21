@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,23 +18,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import '../jquery.extensions/google';
-import { Google } from '../types';
+// this pulls in our package version(s) with a sledgehammer
+const versions = (() => {
+    const regex = /([0-9]+\.[0-9]+\.[0-9]+)/;
+    return (Object.entries(require('../../package.json').dependencies) as string[][])
+        .filter(([name, version]) => !name.includes('@types') && version.match(regex))
+        .map(([name, version]) => {
+            return {
+                name,
+                version: (version.match(regex) || [])[0]
+            };
+        })
+        .filter(entry => entry.version);
+})();
 
-export type FontDisplayType = Google.Fonts.DisplayType;
-
-/**
- * A very simple wrapper around the Google Fonts CSS API that loads fonts
- * with Regular, Bold, Italic, and Bold Italic styles
- *
- * See: https://developers.google.com/fonts/docs/css2
- *
- * @param families
- * @param display
- * @constructor
- */
-export const GoogleFontsLoader = (families: string | string[], display: FontDisplayType = 'swap') => {
-    return $.loadGoogleFonts(families, display);
+export const version = (name: string): string | undefined => {
+    return versions.filter(pkg => pkg.name === name)
+        .shift()?.version;
 };
 
-export default GoogleFontsLoader;
+export const CDNJS = 'https://cdnjs.cloudflare.com/ajax/libs';
+
+export const JSDELIVR = 'https://cdn.jsdelivr.net/npm';
