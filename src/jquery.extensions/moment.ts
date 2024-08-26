@@ -31,6 +31,14 @@ declare global {
          * @param strict
          */
         moment(input?: MomentInput, strict?: boolean): Moment;
+
+        /**
+         * Initiates an instance of moment.js from a UTC date
+         *
+         * @param input
+         * @param strict
+         */
+        momentUtc(input?: MomentInput, strict?: boolean): Moment;
     }
 
     interface Window {
@@ -42,6 +50,9 @@ declare global {
     const setup = () => {
         $.moment = (input?: MomentInput, strict?: boolean): Moment =>
             window.moment(input, strict);
+
+        $.momentUtc = (input?: MomentInput, strict?: boolean): Moment =>
+            window.moment.utc(input, strict);
     };
 
     if (typeof window.moment === 'undefined') {
