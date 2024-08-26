@@ -151,10 +151,10 @@
     dotenv "^16.4.5"
     winston "^3.13.1"
 
-"@gibme/overlay@^0.9.4":
-  version "0.9.4"
-  resolved "https://registry.yarnpkg.com/@gibme/overlay/-/overlay-0.9.4.tgz#9efa8dfcd00fb1765e3b8169ae0494a2c27276fe"
-  integrity sha512-r//LKIiPGz/YGlOmerF4ldOSPKdf4DrOwQBJ/2htrQZ2BDNvLdH8jhAssnb04dDPUFMCD3LJxV0+wprDV3cfOQ==
+"@gibme/overlay@^0.9.5":
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/@gibme/overlay/-/overlay-0.9.5.tgz#8cecea7acb6d4071a6b003733367fef56b7f877e"
+  integrity sha512-7tBcF4akE4hZ055J3SALGyuF/lHcnDgVGCgkJMGYRGoS4uSI3xLna2fIJAJMd/f26RnLvQ3kVpxkHzykH/5fbg==
   dependencies:
     "@gibme/fontawesome" "^0.10.0"
     "@types/jquery" "^3.5.30"

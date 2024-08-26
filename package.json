@@ -1,6 +1,6 @@
 {
   "name": "@gibme/web-ui",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "A simple web-ui helper",
   "main": "./dist/index.js",
   "types": "./dist/index.ts",
@@ -68,7 +68,7 @@
     "@gibme/fetch": "^1.0.14",
     "@gibme/fontawesome": "^0.10.0",
     "@gibme/local-storage": "^1.0.12",
-    "@gibme/overlay": "^0.9.4",
+    "@gibme/overlay": "^0.9.5",
     "@gibme/qrcode": "^1.0.1",
     "@gibme/timer": "^1.0.12",
     "@gibme/websocket": "^1.0.12",
