@@ -58,6 +58,7 @@ declare global {
         if (typeof $.fn.smoothieChart === 'undefined') return 'smoothie';
         if (typeof $.timer === 'undefined') return 'timer';
         if (typeof $.websocket === 'undefined') return 'websocket';
+        if (typeof $.crypto === 'undefined') return 'crypto';
     };
 
     const jq_ready = $.fn.ready;

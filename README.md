@@ -27,6 +27,7 @@ Bundled up *common* UI tools with a lot of helpers extended into jQuery
 | [WebSocketClient](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications) | `$.websocket()`                                                                                                                                       | CDN         |
 | [Nano ID](https://npmjs.org/package/nanoid)                                                                              | `$.nanoid()`                                                                                                                                          | Bundled     |
 | [@simplewebauthn/browser](https://simplewebauthn.dev/docs/packages/browser)                                              | `$.webauthn()`                                                                                                                                        | CDN         |
+| [Advanced Crypto](https://gibme-npm.github.io/crypto/classes/Crypto.html)                                                | `$.crypto`                                                                                                                                            | CDN         |
 
 ## Documentation
 

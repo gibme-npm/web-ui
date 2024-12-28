@@ -18,58 +18,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import type { Cookie, CookieJar, FetchInit, FetchInterface, Response } from '@gibme/fetch';
-import type { Store as CookieStore } from 'tough-cookie';
+import type { Response, Fetch } from '@gibme/fetch';
 import { version, JSDELIVR } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
         /**
-         * Creates a new Cookie
-         *
-         * @param properties
-         */
-        cookie(properties?: Cookie.Properties): Cookie;
-
-        /**
-         * Creates a CookieJar
-         *
-         * @param store
-         * @param options
-         */
-        cookieJar(store?: CookieStore, options?: CookieJar.Options): CookieJar;
-
-        /**
          * cross-fetch wrapper with additional options
          */
-        fetch(url: string, init?: FetchInit): Promise<Response>;
+        fetch(url: string, init?: Fetch.InitWeb): Promise<Response>;
     }
 
     interface Window {
-        Cookie: typeof Cookie;
-        CookieJar: typeof CookieJar;
-        Fetch: FetchInterface;
+        Fetch: Fetch.WebInterface;
     }
 }
 
 ($ => {
     const setup = () => {
-        $.cookie = (properties?: Cookie.Properties): Cookie =>
-            new window.Cookie(properties);
-
-        $.cookieJar = (store?: CookieStore, options?: CookieJar.Options): CookieJar =>
-            new window.CookieJar(store, options);
-
-        $.fetch = async (url: string, init?: FetchInit): Promise<Response> =>
+        $.fetch = async (url: string, init?: Fetch.InitWeb): Promise<Response> =>
             window.Fetch(url, init);
     };
 
-    if (typeof window.Fetch === 'undefined' ||
-        typeof window.Cookie === 'undefined' ||
-        typeof window.CookieJar === 'undefined'
-    ) {
+    if (typeof window.Fetch === 'undefined') {
         $.getScript({
-            url: `${JSDELIVR}/@gibme/fetch@${version('@gibme/fetch')}/dist/Fetch.bundle.js`,
+            url: `${JSDELIVR}/@gibme/fetch@${version('@gibme/fetch')}/dist/Fetch.min.js`,
             cache: true,
             success: () => setup()
         });
