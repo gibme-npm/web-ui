@@ -23,6 +23,9 @@ import type { ModalTypes } from './types';
 import { nanoid } from 'nanoid';
 export * from './types';
 
+/** @ignore */
+const $ = window.$;
+
 export default abstract class Modal {
     private static _id?: string;
     private static readonly emitter = new EventEmitter();
