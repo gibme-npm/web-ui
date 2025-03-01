@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 import type { Google } from '../types';
+import type { GoogleMap } from '../helpers/google.maps';
 
 declare global {
     interface JQueryStatic {
@@ -51,7 +52,7 @@ declare global {
             API_KEY: string,
             element?: JQuery<ElementType>,
             options?: Partial<Google.Maps.Options>
-        ): Promise<google.maps.Map>;
+        ): Promise<GoogleMap>;
 
         /**
          * Represents the center of the USA
@@ -124,6 +125,8 @@ declare global {
             .appendTo(header);
     };
 
+    const maps = new Map<string, GoogleMap>();
+
     {
         let loaded = false;
 
@@ -131,9 +134,35 @@ declare global {
             API_KEY: string,
             element: JQuery<ElementType> = $(document.body) as JQuery<ElementType>,
             options: Partial<Google.Maps.Options> = $.USACentered()
-        ): Promise<google.maps.Map> {
+        ): Promise<GoogleMap> {
+            const create_if_not_exists = async (): Promise<GoogleMap> => {
+                let map = maps.get(element.id());
+
+                if (map) {
+                    map.setOptions(options);
+
+                    return map;
+                }
+
+                const MapWrapper = (await import('../helpers/google.maps')).GoogleMap;
+
+                map = new MapWrapper(element.element(), options);
+
+                maps.set(element.id(), map);
+
+                return map;
+            };
+
+            {
+                const map = maps.get(element.id());
+
+                if (map) {
+                    return map;
+                }
+            }
+
             if (loaded) {
-                return new google.maps.Map(element.element(), options);
+                return create_if_not_exists();
             } else {
                 return new Promise((resolve, reject) => {
                     options.language ??= 'en';
@@ -154,12 +183,12 @@ declare global {
 
                     if (options.region) params.set('region', options.region.trim());
 
-                    window.WebUIInitializeMap = () => {
+                    window.WebUIInitializeMap = async () => {
                         delete window.WebUIInitializeMap;
 
                         loaded = true;
 
-                        return resolve(new google.maps.Map(element.element(), options));
+                        return resolve(await create_if_not_exists());
                     };
 
                     $.ajax({
