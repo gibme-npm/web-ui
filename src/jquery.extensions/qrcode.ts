@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2025, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import type { Options, QRCode } from '@gibme/qrcode';
+import type { QRCode } from '@gibme/qrcode';
 import { version, JSDELIVR } from '../helpers/cdn';
 import { Buffer } from '../modules/buffer';
 
@@ -30,7 +30,7 @@ declare global {
          *
          * Note: only <img>, <svg>, and <canvas> elements are supported at this time
          */
-        qrCode(text: string, options?: Partial<Options>): Promise<JQuery>
+        qrCode(text: string, options?: Partial<QRCode.Options>): Promise<JQuery>
     }
 
     interface Window {
@@ -40,7 +40,7 @@ declare global {
 
 ($ => {
     const setup = () => {
-        $.fn.qrCode = async function (text: string, options: Partial<Options> = {}): Promise<JQuery> {
+        $.fn.qrCode = async function (text: string, options: Partial<QRCode.Options> = {}): Promise<JQuery> {
             const $this = $(this);
             options.size ??= $this.width();
 
@@ -52,11 +52,10 @@ declare global {
                 throw new Error('Unsupported element for QR Code');
             }
 
-            const code = window.QRCode(text, options);
+            const url = window.QRCode(text, options);
 
-            const response = await $.fetch(code.base_url, {
-                method: 'POST',
-                json: code.options
+            const response = await $.fetch(url, {
+                method: 'GET'
             });
 
             if (!response.ok) {

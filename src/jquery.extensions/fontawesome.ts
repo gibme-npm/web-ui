@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2025, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,8 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { createIcon, createButton } from '@gibme/fontawesome';
-import type { Button, Icon } from '@gibme/fontawesome';
+import { createIcon, createButton, FontAwesome } from '@gibme/fontawesome';
 
 declare global {
     interface JQueryStatic {
@@ -31,7 +30,7 @@ declare global {
          */
         createAwesomeButton(
             icon: string | string[],
-            options?: Partial<Button.Options>
+            options?: Partial<FontAwesome.Button.Options>
         ): JQuery<HTMLButtonElement>;
 
         /**
@@ -46,7 +45,7 @@ declare global {
          */
         createAwesomeIcon(
             icon: string | string[],
-            options?: Partial<Icon.Options>
+            options?: Partial<FontAwesome.Icon.Options>
         ): JQuery<HTMLElement>;
     }
 }
@@ -54,12 +53,12 @@ declare global {
 ($ => {
     $.createAwesomeButton = (
         icon: string | string[],
-        options: Partial<Button.Options> = {}
+        options: Partial<FontAwesome.Button.Options> = {}
     ): JQuery<HTMLButtonElement> => $(createButton(icon, options));
 
     $.createAwesomeIcon = (
         icon: string | string[],
-        options: Partial<Icon.Options> = {}
+        options: Partial<FontAwesome.Icon.Options> = {}
     ): JQuery<HTMLElement> => $(createIcon(icon, options));
 })(window.$);
 

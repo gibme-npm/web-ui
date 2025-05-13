@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2025, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import type { Overlay, Options, Action } from '@gibme/overlay';
+import type { Overlay } from '@gibme/overlay';
 import { version, JSDELIVR } from '../helpers/cdn';
 
 declare global {
@@ -34,7 +34,7 @@ declare global {
          * @param action
          * @param options
          */
-        overlay(action: Action, options?: Options): JQuery;
+        overlay(action: Overlay.Action, options?: Partial<Overlay.Options>): JQuery;
     }
 
     interface JQueryStatic {
@@ -49,7 +49,7 @@ declare global {
          * @param action
          * @param options
          */
-        overlay(action: Action, options?: Options): JQuery;
+        overlay(action: Overlay.Action, options?: Partial<Overlay.Options>): JQuery;
     }
 
     interface Window {
@@ -63,7 +63,7 @@ declare global {
             return window.Overlay.isOpen($(this));
         };
 
-        $.fn.overlay = function (action: Action, options: Options = {}): JQuery {
+        $.fn.overlay = function (action: Overlay.Action, options: Partial<Overlay.Options> = {}): JQuery {
             return window.Overlay.handle($(this), action, options);
         };
 
@@ -71,7 +71,7 @@ declare global {
             return $(document.body).isOverlayOpen();
         };
 
-        $.overlay = (action: Action, options: Options = {}): JQuery => {
+        $.overlay = (action: Overlay.Action, options: Partial<Overlay.Options> = {}): JQuery => {
             return $(document.body).overlay(action, options);
         };
     };

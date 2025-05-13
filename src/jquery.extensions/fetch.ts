@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2021-2025, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import type { Response, Fetch } from '@gibme/fetch';
+// eslint-disable-next-line import/no-named-default
+import type { Response, fetch } from '@gibme/fetch/browser';
 import { version, JSDELIVR } from '../helpers/cdn';
 
 declare global {
@@ -26,21 +27,21 @@ declare global {
         /**
          * cross-fetch wrapper with additional options
          */
-        fetch(url: string, init?: Fetch.InitWeb): Promise<Response>;
+        fetch(url: string, init?: fetch.Init): Promise<Response>;
     }
 
     interface Window {
-        Fetch: Fetch.WebInterface;
+        fetch: typeof fetch;
     }
 }
 
 ($ => {
     const setup = () => {
-        $.fetch = async (url: string, init?: Fetch.InitWeb): Promise<Response> =>
-            window.Fetch(url, init);
+        $.fetch = async (url: string, init?: fetch.Init): Promise<Response> =>
+            window.fetch(url, init);
     };
 
-    if (typeof window.Fetch === 'undefined') {
+    if (typeof window.fetch === 'undefined') {
         $.getScript({
             url: `${JSDELIVR}/@gibme/fetch@${version('@gibme/fetch')}/dist/Fetch.min.js`,
             cache: true,
