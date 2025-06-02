@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import type { IChartOptions, ITimeSeriesOptions, SmoothieChart, TimeSeries } from 'smoothie';
-import { version, CDNJS } from '../helpers/cdn';
+import { version, CDNJS, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -28,7 +28,7 @@ declare global {
          *
          * @param seriesOptions
          */
-        timeSeries(seriesOptions?: ITimeSeriesOptions): TimeSeries;
+        timeSeries(seriesOptions?: ITimeSeriesOptions): Promise<TimeSeries>;
     }
 
     interface JQuery {
@@ -38,7 +38,7 @@ declare global {
          * @param chartOptions
          * @param delayMillis
          */
-        smoothieChart(chartOptions?: IChartOptions, delayMillis?: number): SmoothieChart;
+        smoothieChart(chartOptions?: IChartOptions, delayMillis?: number): Promise<SmoothieChart>;
     }
 
     interface Window {
@@ -50,34 +50,31 @@ declare global {
 const charts = new Map<string, SmoothieChart>();
 
 ($ => {
-    const setup = () => {
-        $.timeSeries = (options: ITimeSeriesOptions): TimeSeries =>
-            new window.TimeSeries(options);
+    const load = async () =>
+        loadScript([window.TimeSeries, window.SmoothieChart],
+            `${CDNJS}/smoothie/${version('smoothie')}/smoothie.min.js`);
 
-        $.fn.smoothieChart = function (options: IChartOptions = {}, delayMillis?: number): SmoothieChart {
-            const canvas = $(this) as JQuery<HTMLCanvasElement>;
+    $.timeSeries = async (options: ITimeSeriesOptions): Promise<TimeSeries> => {
+        await load();
 
-            const chart = charts.get(canvas.id()) || (() => {
-                const chart = new window.SmoothieChart(options);
-                chart.streamTo(canvas.element(), delayMillis);
-                return chart;
-            })();
-
-            charts.set(canvas.id(), chart);
-
-            return chart;
-        };
+        return new window.TimeSeries(options);
     };
 
-    if (typeof window.TimeSeries === 'undefined' || typeof window.SmoothieChart === 'undefined') {
-        $.getScript({
-            url: `${CDNJS}/smoothie/${version('smoothie')}/smoothie.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
+    $.fn.smoothieChart = async function (options: IChartOptions = {}, delayMillis?: number): Promise<SmoothieChart> {
+        await load();
+
+        const canvas = $(this) as JQuery<HTMLCanvasElement>;
+
+        const chart = charts.get(canvas.id()) || (() => {
+            const chart = new window.SmoothieChart(options);
+            chart.streamTo(canvas.element(), delayMillis);
+            return chart;
+        })();
+
+        charts.set(canvas.id(), chart);
+
+        return chart;
+    };
 })(window.$);
 
 export {};

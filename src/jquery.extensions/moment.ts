@@ -20,7 +20,7 @@
 
 // eslint-disable-next-line import/no-named-default
 import type { MomentInput, Moment, default as MomentJS } from 'moment';
-import { version, CDNJS } from '../helpers/cdn';
+import { version, CDNJS, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -47,23 +47,16 @@ declare global {
 }
 
 ($ => {
-    const setup = () => {
+    (async () => {
+        await loadScript(window.moment,
+            `${CDNJS}/moment.js/${version('moment')}/moment-with-locales.min.js`);
+
         $.moment = (input?: MomentInput, strict?: boolean): Moment =>
             window.moment(input, strict);
 
         $.momentUtc = (input?: MomentInput, strict?: boolean): Moment =>
             window.moment.utc(input, strict);
-    };
-
-    if (typeof window.moment === 'undefined') {
-        $.getScript({
-            url: `${CDNJS}/moment.js/${version('moment')}/moment-with-locales.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
+    })();
 })(window.$);
 
 export {};

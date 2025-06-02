@@ -22,7 +22,7 @@ import Crypto from '@gibme/crypto-browser';
 
 declare global {
     interface JQueryStatic {
-        crypto: Crypto;
+        crypto: Readonly<Crypto>;
     }
 }
 

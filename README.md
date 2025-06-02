@@ -2,7 +2,7 @@
 
 Bundled up *common* UI tools with a lot of helpers extended into jQuery
 
-**Note: This package is blocking as it waits for all the dependent modules to load from CDN. It is highly recommended that you use jQuery's ready event before attempting to use these methods.
+**Note: Many of the dependent modules are blocking as they load from CDN automatically. It is highly recommended that you use jQuery's ready event before attempting to use these methods.
 
 | Package                                                                                                                  | Accessed Via                                                                                                                                          | Loaded From |
 |--------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|
@@ -38,9 +38,9 @@ Bundled up *common* UI tools with a lot of helpers extended into jQuery
 ```typescript
 import '@gibme/web-ui';
 
-$(() => {
-    $('some_data_table').dt();
+$(async () => {
+    await $('some_data_table').dt();
     
-    $('some_canvas').qrCode('https://github.com');
+    await $('some_canvas').qrCode('https://github.com');
 })
 ```

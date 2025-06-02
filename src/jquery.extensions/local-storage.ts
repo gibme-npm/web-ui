@@ -19,14 +19,14 @@
 // SOFTWARE.
 
 import type { LocalStorage } from '@gibme/local-storage';
-import { version, JSDELIVR } from '../helpers/cdn';
+import { version, JSDELIVR, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
         /**
          * Simple interface to the browser localStorage system
          */
-        localStorage(): typeof LocalStorage;
+        localStorage(): Promise<typeof LocalStorage>;
     }
 
     interface Window {
@@ -35,19 +35,12 @@ declare global {
 }
 
 ($ => {
-    const setup = () => {
-        $.localStorage = (): typeof LocalStorage => window.LocalStorage;
-    };
+    $.localStorage = async (): Promise<typeof LocalStorage> => {
+        await loadScript(window.LocalStorage,
+            `${JSDELIVR}/@gibme/local-storage@${version('@gibme/local-storage')}/dist/LocalStorage.min.js`);
 
-    if (typeof window.LocalStorage === 'undefined') {
-        $.getScript({
-            url: `${JSDELIVR}/@gibme/local-storage@${version('@gibme/local-storage')}/dist/local-storage.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
+        return window.LocalStorage;
+    };
 })(window.$);
 
 export {};

@@ -20,7 +20,7 @@
 
 // eslint-disable-next-line import/no-named-default
 import type { default as SimpleWebAuthnBrowser } from '@simplewebauthn/browser';
-import { version, JSDELIVR } from '../helpers/cdn';
+import { version, JSDELIVR, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -29,7 +29,7 @@ declare global {
          *
          * See: https://simplewebauthn.dev/docs/packages/browser
          */
-        webauthn(): typeof SimpleWebAuthnBrowser;
+        webauthn(): Promise<typeof SimpleWebAuthnBrowser>;
     }
 
     interface Window {
@@ -38,20 +38,13 @@ declare global {
 }
 
 ($ => {
-    const setup = () => {
-        $.webauthn = () => window.SimpleWebAuthnBrowser;
-    };
+    $.webauthn = async (): Promise<typeof SimpleWebAuthnBrowser> => {
+        await loadScript(window.SimpleWebAuthnBrowser,
+            `${JSDELIVR}/@simplewebauthn/browser@${version('@simplewebauthn/browser')}` +
+            '/dist/bundle/index.umd.min.js');
 
-    if (typeof window.SimpleWebAuthnBrowser === 'undefined') {
-        $.getScript({
-            // eslint-disable-next-line max-len
-            url: `${JSDELIVR}/@simplewebauthn/browser@${version('@simplewebauthn/browser')}/dist/bundle/index.umd.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
+        return window.SimpleWebAuthnBrowser;
+    };
 })(window.$);
 
 export {};

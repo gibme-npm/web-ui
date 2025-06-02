@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import type { Overlay } from '@gibme/overlay';
-import { version, JSDELIVR } from '../helpers/cdn';
+import { version, JSDELIVR, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQuery {
@@ -58,7 +58,10 @@ declare global {
 }
 
 ($ => {
-    const setup = () => {
+    (async () => {
+        await loadScript(window.Overlay,
+            `${JSDELIVR}/@gibme/overlay@${version('@gibme/overlay')}/dist/Overlay.min.js`);
+
         $.fn.isOverlayOpen = function (): boolean {
             return window.Overlay.isOpen($(this));
         };
@@ -74,17 +77,7 @@ declare global {
         $.overlay = (action: Overlay.Action, options: Partial<Overlay.Options> = {}): JQuery => {
             return $(document.body).overlay(action, options);
         };
-    };
-
-    if (typeof window.Overlay === 'undefined') {
-        $.getScript({
-            url: `${JSDELIVR}/@gibme/overlay@${version('@gibme/overlay')}/dist/Overlay.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
+    })();
 })(window.$);
 
 export {};

@@ -19,16 +19,16 @@
 // SOFTWARE.
 
 import type { Chart, ChartConfiguration } from 'chart.js';
-import { version, CDNJS } from '../helpers/cdn';
+import { version, CDNJS, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQuery {
         /**
-         * Initialises a new Chart.js instance
+         * Initializes a new Chart.js instance
          *
          * @param config
          */
-        chartJS(config: ChartConfiguration): Chart;
+        chartJS(config: ChartConfiguration): Promise<Chart>;
     }
 
     interface Window {
@@ -39,28 +39,18 @@ declare global {
 const charts = new Map<string, Chart>();
 
 ($ => {
-    const setup = () => {
-        $.fn.chartJS = function (config: ChartConfiguration): Chart {
-            const canvas = $(this) as JQuery<HTMLCanvasElement>;
+    $.fn.chartJS = async function (config: ChartConfiguration): Promise<Chart> {
+        await loadScript(window.Chart, `${CDNJS}/Chart.js/${version('chart.js')}/chart.umd.min.js`);
 
-            const chart = charts.get(canvas.id()) || new window.Chart(
-                canvas.element<HTMLCanvasElement>(), config);
+        const canvas = $(this) as JQuery<HTMLCanvasElement>;
 
-            charts.set(canvas.id(), chart);
+        const chart = charts.get(canvas.id()) || new window.Chart(
+            canvas.element<HTMLCanvasElement>(), config);
 
-            return chart;
-        };
+        charts.set(canvas.id(), chart);
+
+        return chart;
     };
-
-    if (typeof window.Chart === 'undefined') {
-        $.getScript({
-            url: `${CDNJS}/Chart.js/${version('chart.js')}/chart.umd.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
 })(window.$);
 
 export {};

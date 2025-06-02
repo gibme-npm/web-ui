@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import type { Response, fetch } from '@gibme/fetch/browser';
-import { version, JSDELIVR } from '../helpers/cdn';
+import { version, JSDELIVR, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -31,18 +31,19 @@ declare global {
 
     interface Window {
         fetch: typeof fetch;
+        fetchLoaded: boolean;
     }
 }
 
 ($ => {
-    $.getScript({
-        url: `${JSDELIVR}/@gibme/fetch@${version('@gibme/fetch')}/dist/Fetch.min.js`,
-        cache: true,
-        success: () => {
-            $.fetch = async (url: string, init?: fetch.Init): Promise<Response> =>
-                window.fetch(url, init);
-        }
-    });
+    $.fetch = async (url: string, init?: fetch.Init): Promise<Response> => {
+        await loadScript([window.fetch, window.fetchLoaded],
+            `${JSDELIVR}/@gibme/fetch@${version('@gibme/fetch')}/dist/Fetch.min.js`);
+
+        window.fetchLoaded = true;
+
+        return window.fetch(url, init);
+    };
 })(window.$);
 
 export {};

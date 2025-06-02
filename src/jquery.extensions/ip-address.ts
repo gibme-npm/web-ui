@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import type { Address4, Address6, v4 } from '@gibme/ip-address';
-import { version, JSDELIVR } from '../helpers/cdn';
+import { version, JSDELIVR, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -27,37 +27,37 @@ declare global {
          * Returns whether the specified v4 IP address is valid
          * @param address
          */
-        address4isValid(address: string): boolean;
+        address4isValid(address: string): Promise<boolean>;
 
         /**
          * Creates a new Address4 instance
          * @param address
          */
-        address4(address: string): Address4;
+        address4(address: string): Promise<Address4>;
 
         /**
          * Returns whether the specified v6 IP address is valid
          * @param address
          */
-        address6isValid(address: string): boolean;
+        address6isValid(address: string): Promise<boolean>;
 
         /**
          * Creates a new Address6 instance
          * @param address
          */
-        address6(address: string): Address6;
+        address6(address: string): Promise<Address6>;
 
         /**
          * Converts an IP v4 mask length into a dotted decimal subnet mask
          * @param length
          */
-        maskLengthToSubnetMask(length: number): string;
+        maskLengthToSubnetMask(length: number): Promise<string>;
 
         /**
          * Converts a dotted decimal subnet mask into a CIDR mask length
          * @param mask
          */
-        subnetMaskToMaskLength(mask: string): number;
+        subnetMaskToMaskLength(mask: string): Promise<number>;
     }
 
     interface Window {
@@ -68,31 +68,45 @@ declare global {
 }
 
 ($ => {
-    const setup = () => {
-        $.address4isValid = (address: string): boolean => window.Address4.isValid(address);
+    const load = async (): Promise<void> =>
+        loadScript([window.Address4, window.Address6, window.v4],
+            `${JSDELIVR}/@gibme/ip-address@${version('@gibme/ip-address')}/dist/ip-address.min.js`);
 
-        $.address4 = (address: string): Address4 => new window.Address4(address);
+    $.address4isValid = async (address: string): Promise<boolean> => {
+        await load();
 
-        $.address6isValid = (address: string): boolean => window.Address6.isValid(address);
-
-        $.address6 = (address: string): Address6 => new window.Address6(address);
-
-        $.maskLengthToSubnetMask = (length: number): string => window.v4.helpers.maskLengthToSubnetMask(length);
-
-        $.subnetMaskToMaskLength = (mask: string): number => window.v4.helpers.subnetMaskToMaskLength(mask);
+        return window.Address4.isValid(address);
     };
 
-    if (typeof window.Address4 === 'undefined' ||
-        typeof window.Address6 === 'undefined' ||
-        typeof window.v4 === 'undefined') {
-        $.getScript({
-            url: `${JSDELIVR}/@gibme/ip-address@${version('@gibme/ip-address')}/dist/ip-address.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
+    $.address4 = async (address: string): Promise<Address4> => {
+        await load();
+
+        return new window.Address4(address);
+    };
+
+    $.address6isValid = async (address: string): Promise<boolean> => {
+        await load();
+
+        return window.Address6.isValid(address);
+    };
+
+    $.address6 = async (address: string): Promise<Address6> => {
+        await load();
+
+        return new window.Address6(address);
+    };
+
+    $.maskLengthToSubnetMask = async (length: number): Promise<string> => {
+        await load();
+
+        return window.v4.helpers.maskLengthToSubnetMask(length);
+    };
+
+    $.subnetMaskToMaskLength = async (mask: string): Promise<number> => {
+        await load();
+
+        return window.v4.helpers.subnetMaskToMaskLength(mask);
+    };
 })(window.$);
 
 export {};

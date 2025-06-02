@@ -20,7 +20,7 @@
 
 // eslint-disable-next-line import/no-named-default
 import type { Numeral, NumeralJSFormat, NumeralJSLocale, RegisterType, default as NumeralJS } from 'numeral';
-import { version, CDNJS } from '../helpers/cdn';
+import { version, CDNJS, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -74,7 +74,14 @@ declare global {
 
 ($ => {
     const ver = version('numeral');
-    const setup = () => {
+
+    (async () => {
+        await loadScript(window.numeral,
+            [
+                `${CDNJS}/numeral.js/${ver}/numeral.min.js`,
+                `${CDNJS}/numeral.js/${ver}/locales.min.js`
+            ]);
+
         $.numeral = (input?: any): Numeral =>
             window.numeral(input);
 
@@ -119,23 +126,7 @@ declare global {
         $.numeralZeroFormat = (format: string): void => {
             window.numeral.zeroFormat(format);
         };
-    };
-
-    if (typeof window.numeral === 'undefined') {
-        $.getScript({
-            url: `${CDNJS}/numeral.js/${ver}/numeral.min.js`,
-            cache: true,
-            success: () => {
-                $.getScript({
-                    url: `${CDNJS}/numeral.js/${ver}/locales.min.js`,
-                    cache: true,
-                    success: () => setup()
-                });
-            }
-        });
-    } else {
-        setup();
-    }
+    })();
 })(window.$);
 
 export {};

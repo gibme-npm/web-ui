@@ -21,7 +21,7 @@
 // eslint-disable-next-line import/no-named-default
 import type { HlsConfig, default as Hls } from 'hls.js';
 import type { HTML } from '../types';
-import { version, CDNJS } from '../helpers/cdn';
+import { version, CDNJS, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -39,14 +39,14 @@ declare global {
             src: string,
             options?: Partial<HTML.Video.Options>,
             hlsConfig?: Partial<HlsConfig>
-        ): [JQuery<HTMLMediaElement>, Hls];
+        ): Promise<[JQuery<HTMLMediaElement>, Hls]>;
 
         /**
          * Creates a new instance of Hls.js using the supplied configuration parameters
          *
          * @param config
          */
-        hls(config: Partial<HlsConfig>): Hls;
+        hls(config: Partial<HlsConfig>): Promise<Hls>;
     }
 
     interface Window {
@@ -55,40 +55,37 @@ declare global {
 }
 
 ($ => {
-    const setup = () => {
-        $.createHLSMedia = (
-            src: string,
-            options: Partial<HTML.Video.Options> = {},
-            hlsConfig: Partial<HlsConfig> = {}
-        ): [JQuery<HTMLMediaElement>, Hls] => {
-            const hls = new window.Hls(hlsConfig);
+    const load = async () =>
+        loadScript(window.Hls, `${CDNJS}/hls.js/${version('hls.js')}/hls.min.js`);
 
-            const elem = $.createMedia(undefined, options);
+    $.createHLSMedia = async (
+        src: string,
+        options: Partial<HTML.Video.Options> = {},
+        hlsConfig: Partial<HlsConfig> = {}
+    ): Promise<[JQuery<HTMLMediaElement>, Hls]> => {
+        await load();
 
-            hls.loadSource(src);
-            hls.attachMedia(elem[0]);
+        const hls = new window.Hls(hlsConfig);
 
-            if (options.autoplay) {
-                hls.on(window.Hls.Events.MEDIA_ATTACHED, () => {
-                    elem.trigger('play');
-                });
-            }
+        const elem = $.createMedia(undefined, options);
 
-            return [elem, hls];
-        };
+        hls.loadSource(src);
+        hls.attachMedia(elem[0]);
 
-        $.hls = (config: Partial<HlsConfig> = {}) => new window.Hls(config);
+        if (options.autoplay) {
+            hls.on(window.Hls.Events.MEDIA_ATTACHED, () => {
+                elem.trigger('play');
+            });
+        }
+
+        return [elem, hls];
     };
 
-    if (typeof window.Hls === 'undefined') {
-        $.getScript({
-            url: `${CDNJS}/hls.js/${version('hls.js')}/hls.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
+    $.hls = async (config: Partial<HlsConfig> = {}): Promise<Hls> => {
+        await load();
+
+        return new window.Hls(config);
+    };
 })(window.$);
 
 export {};

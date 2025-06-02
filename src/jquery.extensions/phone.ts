@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import type { phone, PhoneResult } from '@gibme/phone';
-import { version, JSDELIVR } from '../helpers/cdn';
+import { version, JSDELIVR, loadScript } from '../helpers/cdn';
 
 type Options = {
     country: string;
@@ -34,7 +34,7 @@ declare global {
          * @param number
          * @param options
          */
-        phone(number: string, options?: Partial<Options>): PhoneResult;
+        phone(number: string, options?: Partial<Options>): Promise<PhoneResult>;
     }
 
     interface Window {
@@ -43,19 +43,12 @@ declare global {
 }
 
 ($ => {
-    const setup = () => {
-        $.phone = (number: string, options: Partial<Options> = {}): PhoneResult => window.phone(number, options);
-    };
+    $.phone = async (number: string, options: Partial<Options> = {}): Promise<PhoneResult> => {
+        await loadScript(window.phone,
+            `${JSDELIVR}/@gibme/phone@${version('@gibme/phone')}/dist/phone.min.js`);
 
-    if (typeof window.phone === 'undefined') {
-        $.getScript({
-            url: `${JSDELIVR}/@gibme/phone@${version('@gibme/phone')}/dist/phone.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
+        return window.phone(number, options);
+    };
 })(window.$);
 
 export {};

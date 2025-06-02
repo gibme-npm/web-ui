@@ -41,3 +41,32 @@ export const version = (name: string): string | undefined => {
 export const CDNJS = 'https://cdnjs.cloudflare.com/ajax/libs';
 
 export const JSDELIVR = 'https://cdn.jsdelivr.net/npm';
+
+/** @ignore */
+const load_script = async (uri: string): Promise<boolean> => new Promise(resolve => {
+    $.getScript({
+        url: uri,
+        cache: true,
+        success: () => resolve(true),
+        error: () => resolve(false)
+    });
+});
+
+export const loadScript = async (
+    expected: any,
+    uris: string | string[],
+    noThrow = false
+): Promise<void> => {
+    uris = Array.isArray(uris) ? uris : [uris];
+    expected = Array.isArray(expected) ? expected : [expected];
+
+    if (expected.some((want: any) => typeof want === 'undefined')) {
+        for (const uri of uris) {
+            if (!await load_script(uri)) {
+                if (!noThrow) {
+                    throw new Error(`Failed to load ${uri}`);
+                }
+            }
+        }
+    }
+};

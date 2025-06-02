@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import type { WebSocket } from '@gibme/websocket';
-import { version, JSDELIVR } from '../helpers/cdn';
+import { version, JSDELIVR, loadScript } from '../helpers/cdn';
 
 declare global {
     interface JQueryStatic {
@@ -28,7 +28,7 @@ declare global {
          *
          * @param options
          */
-        websocket(options: WebSocket.Options): WebSocket;
+        websocket(options: WebSocket.Options): Promise<WebSocket>;
     }
 
     interface Window {
@@ -37,20 +37,12 @@ declare global {
 }
 
 ($ => {
-    const setup = () => {
-        $.websocket = (options: WebSocket.Options): WebSocket =>
-            new window.WebSocketClient(options);
-    };
+    $.websocket = async (options: WebSocket.Options): Promise<WebSocket> => {
+        await loadScript(window.WebSocketClient,
+            `${JSDELIVR}/@gibme/websocket@${version('@gibme/websocket')}/dist/websocket.min.js`);
 
-    if (typeof window.WebSocketClient === 'undefined') {
-        $.getScript({
-            url: `${JSDELIVR}/@gibme/websocket@${version('@gibme/websocket')}/dist/websocket.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
+        return new window.WebSocketClient(options);
+    };
 })(window.$);
 
 export {};

@@ -24,7 +24,7 @@ declare global {
     interface JQueryStatic {
         /**
          * Provides a global modal interface that handles creation of the necessary
-         * DOM elements, styling, etc
+         * DOM elements, styling, etc.
          */
         modal(): typeof Modal;
     }
