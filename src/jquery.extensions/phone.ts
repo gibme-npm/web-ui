@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2025, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2025, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,31 +18,44 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-/**
- * We need to attach these to jQuery as quickly as possible
- */
-import './chartjs';
-import './crypto';
-import './datatables';
-import './fetch';
-import './fontawesome';
-import './google';
-import './hls';
-import './html';
-import './ip-address';
-import './local-storage';
-import './modal';
-import './moment';
-import './numeral';
-import './overlay';
-import './phone';
-import './qrcode';
-import './remotes';
-import './simplewebauthn';
-import './sleep';
-import './smoothiechart';
-import './status-modal';
-import './timer';
-import './websocket';
+import type { phone, PhoneResult } from '@gibme/phone';
+import { version, JSDELIVR } from '../helpers/cdn';
+
+type Options = {
+    country: string;
+    validateMobilePrefix: boolean;
+    strictDetection: boolean;
+}
+
+declare global {
+    interface JQueryStatic {
+        /**
+         * Normalizes phone numbers into E.164 format
+         * @param number
+         * @param options
+         */
+        phone(number: string, options: Partial<Options>): PhoneResult;
+    }
+
+    interface Window {
+        phone: typeof phone;
+    }
+}
+
+($ => {
+    const setup = () => {
+        $.phone = (number: string, options: Partial<Options> = {}): PhoneResult => window.phone(number, options);
+    };
+
+    if (typeof window.phone === 'undefined') {
+        $.getScript({
+            url: `${JSDELIVR}/@gibme/phone@${version('@gibme/phone')}/dist/phone.min.js`,
+            cache: true,
+            success: () => setup()
+        });
+    } else {
+        setup();
+    }
+})(window.$);
 
 export {};
