@@ -27,6 +27,55 @@ interface FileContents extends Omit<File, 'arrayBuffer' | 'slice' | 'stream' | '
     lastModified: Date;
 }
 
+type ScrollToOptions = {
+    /**
+     * Whether focus should be applied automatically to the element
+     * after the scroll animation completes
+     * @default true
+     */
+    autoFocus: boolean;
+    /**
+     * The offset to scroll to in addition to the element's offset
+     * Note: to scroll higher than the element, supply a negative value
+     * @default 0
+     */
+    offset: number | Partial<{ top: number, left: number }>,
+    /**
+     * The duration of the scroll animation in milliseconds
+     * @default 400
+     */
+    duration: number;
+    /**
+     * The easing animation style to use
+     * @default swing
+     */
+    easing: 'swing' | 'linear';
+    /**
+     * The direction in which to scroll
+     * @default both
+     */
+    direction: 'vertical' | 'horizontal' | 'both';
+    /**
+     * The target container to scroll to get to the element
+     * @default $('html, body')
+     */
+    container: JQuery<HTMLElement>;
+    /**
+     * Callback method that is called when the animation is complete
+     */
+    callback: () => void;
+    /**
+     * Whether the scroll can be interrupted by the user manually scrolling
+     * @default true
+     */
+    interruptible: boolean;
+    /**
+     * Whether the method should silently discard errors
+     * @default true
+     */
+    noThrow: boolean;
+}
+
 declare global {
     interface JQuery {
         /**
@@ -47,12 +96,12 @@ declare global {
         fileCount(): number;
 
         /**
-         * Retrieve the full HTML for the specified element including the element itself
+         * Retrieve the full HTML for the specified element, including the element itself
          */
         fullHTML(): string;
 
         /**
-         * Returns the elements ID; or, if one is not set, assigns a random UUID to it
+         * Returns the element ID; or, if one is not set, assigns a random UUID to it
          * and returns it
          */
         id(): string;
@@ -63,6 +112,8 @@ declare global {
          * @param type
          */
         path(type: 'id' | 'tagName'): string;
+
+        scrollTo(options: Partial<ScrollToOptions>): JQuery;
 
         /**
          * Returns the element type
@@ -107,7 +158,7 @@ declare global {
          * Order of preference is:
          *
          * 1) specified value
-         * 2) already set via the html tag
+         * 2) already set via the HTML tag
          * 3) browser preference
          * 4) light mode
          *
@@ -344,6 +395,79 @@ declare global {
         return ids.reverse()
             .map(elem => `${type === 'id' ? '#' : ''}${elem}`)
             .join(type === 'id' ? ' ' : ' > ');
+    };
+
+    $.fn.scrollTo = function (options: Partial<ScrollToOptions> = {}): JQuery {
+        const $this = $(this) as JQuery<HTMLElement>;
+        options.autoFocus ??= true;
+        options.offset ??= 0;
+        options.duration ??= 400;
+        options.easing ??= 'swing';
+        options.direction ??= 'both';
+        options.container ??= $('html, body');
+        options.callback ??= () => {};
+        options.interruptible ??= true;
+        options.noThrow ??= true;
+
+        const throwError = (message: string): JQuery => {
+            if (!options.noThrow) {
+                throw new Error(message);
+            }
+
+            return $this;
+        };
+
+        if (!$this.is(':visible')) {
+            return throwError('Element is not visible');
+        }
+
+        if (typeof $this.offset === 'undefined') {
+            return throwError('Could not find element offset');
+        }
+
+        let top = 0;
+        let left = 0;
+
+        try {
+            top = $this.offset()?.top || 0;
+            left = $this.offset()?.left || 0;
+        } catch {
+            return throwError('Could not find element offset');
+        }
+
+        if (typeof options.offset === 'number') {
+            top += options.offset;
+            left += options.offset;
+        } else if (typeof options.offset === 'object') {
+            top += options.offset.top || 0;
+            left += options.offset.left || 0;
+        }
+
+        const properties: Record<string, number> = {};
+
+        if (options.direction === 'vertical' || options.direction === 'both') {
+            properties.scrollTop = top;
+        }
+
+        if (options.direction === 'horizontal' || options.direction === 'both') {
+            properties.scrollLeft = left;
+        }
+
+        if (!options.interruptible) {
+            options.container.stop(true, false);
+        }
+
+        options.container.animate(properties, options.duration, options.easing, function () {
+            if (options.autoFocus) {
+                $this.trigger('focus');
+            }
+
+            if (options.callback) {
+                options.callback.call($this);
+            }
+        });
+
+        return $this;
     };
 
     $.fn.type = function (): string {
