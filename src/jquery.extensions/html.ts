@@ -113,6 +113,11 @@ declare global {
          */
         path(type: 'id' | 'tagName'): string;
 
+        /**
+         * Scrolls to the element
+         *
+         * @param options
+         */
         scrollTo(options: Partial<ScrollToOptions>): JQuery;
 
         /**

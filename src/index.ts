@@ -46,19 +46,21 @@ declare global {
 
     const missing_modules = (): string | undefined => {
         if (typeof $.fn.chartJS === 'undefined') return 'chart.js';
+        if (typeof $.crypto === 'undefined') return 'crypto';
         if (typeof $.fn.dt === 'undefined') return 'datatables.net';
         if (typeof $.fetch === 'undefined') return 'fetch';
         if (typeof $.createHLSMedia === 'undefined') return 'hls.js';
+        if (typeof $.address4 === 'undefined') return 'ip-address';
         if (typeof $.localStorage === 'undefined') return 'local-storage';
         if (typeof $.moment === 'undefined') return 'moment';
         if (typeof $.numeral === 'undefined') return 'numeral';
         if (typeof $.fn.overlay === 'undefined') return 'overlay';
+        if (typeof $.phone === 'undefined') return 'phone';
         if (typeof $.fn.qrCode === 'undefined') return 'qrCode';
         if (typeof $.webauthn === 'undefined') return 'simplewebauthn';
         if (typeof $.fn.smoothieChart === 'undefined') return 'smoothie';
         if (typeof $.timer === 'undefined') return 'timer';
         if (typeof $.websocket === 'undefined') return 'websocket';
-        if (typeof $.crypto === 'undefined') return 'crypto';
     };
 
     const jq_ready = $.fn.ready;
