@@ -57,20 +57,34 @@ declare global {
                 options.retrieve ??= true;
             }
 
-            const table = $this.DataTable(options);
+            const $table = $this.DataTable(options);
 
             if (options.buttons) {
                 if (buttonContainer) {
-                    table.buttons().container().appendTo(buttonContainer);
+                    $table.buttons().container().appendTo(buttonContainer);
                 } else {
                     $(`#${id}_wrapper`)
                         .children(':first')
                         .children(':first')
-                        .append(table.buttons().container());
+                        .append($table.buttons().container());
                 }
             }
 
-            return table;
+            const old_draw = $table.draw;
+
+            $table.draw = function (paging?: boolean | string): Api {
+                old_draw.call(this, paging);
+
+                this.columns.adjust();
+
+                if (options.responsive) {
+                    this.responsive.recalc();
+                }
+
+                return this;
+            };
+
+            return $table.draw();
         };
     };
 
