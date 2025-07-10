@@ -34,7 +34,7 @@ declare global {
          * @param number
          * @param options
          */
-        phone(number: string, options: Partial<Options>): PhoneResult;
+        phone(number: string, options?: Partial<Options>): PhoneResult;
     }
 
     interface Window {
