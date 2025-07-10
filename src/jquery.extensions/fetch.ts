@@ -36,20 +36,14 @@ declare global {
 }
 
 ($ => {
-    const setup = () => {
-        $.fetch = async (url: string, init?: fetch.Init): Promise<Response> =>
-            window.fetch(url, init);
-    };
-
-    if (typeof window.fetch === 'undefined') {
-        $.getScript({
-            url: `${JSDELIVR}/@gibme/fetch@${version('@gibme/fetch')}/dist/Fetch.min.js`,
-            cache: true,
-            success: () => setup()
-        });
-    } else {
-        setup();
-    }
+    $.getScript({
+        url: `${JSDELIVR}/@gibme/fetch@${version('@gibme/fetch')}/dist/Fetch.min.js`,
+        cache: true,
+        success: () => {
+            $.fetch = async (url: string, init?: fetch.Init): Promise<Response> =>
+                window.fetch(url, init);
+        }
+    });
 })(window.$);
 
 export {};
