@@ -111,14 +111,14 @@ declare global {
          *
          * @param type
          */
-        path(type: 'id' | 'tagName'): string;
+        path(type?: 'id' | 'tagName'): string;
 
         /**
          * Scrolls to the element
          *
          * @param options
          */
-        scrollTo(options: Partial<ScrollToOptions>): JQuery;
+        scrollTo(options?: Partial<ScrollToOptions>): JQuery;
 
         /**
          * Returns the element type
@@ -132,7 +132,7 @@ declare global {
          *
          * @param options
          */
-        createFloatingInputGroup(options: Partial<HTML.Input.Options>): JQuery<HTMLElement>;
+        createFloatingInputGroup(options?: Partial<HTML.Input.Options>): JQuery<HTMLElement>;
 
         /**
          * Creates a new JQuery HTML Media Element with the properties set as defined in the options
