@@ -41,34 +41,19 @@ type ScrollToOptions = {
      */
     offset: number | Partial<{ top: number, left: number }>,
     /**
-     * The duration of the scroll animation in milliseconds
-     * @default 400
+     * The scroll behavior to use
+     * @default auto
      */
-    duration: number;
-    /**
-     * The easing animation style to use
-     * @default swing
-     */
-    easing: 'swing' | 'linear';
+    behavior: 'smooth' | 'instant' | 'auto'
     /**
      * The direction in which to scroll
      * @default both
      */
     direction: 'vertical' | 'horizontal' | 'both';
     /**
-     * The target container to scroll to get to the element
-     * @default $('html, body')
-     */
-    container: JQuery<HTMLElement>;
-    /**
      * Callback method that is called when the animation is complete
      */
     callback: () => void;
-    /**
-     * Whether the scroll can be interrupted by the user manually scrolling
-     * @default true
-     */
-    interruptible: boolean;
     /**
      * Whether the method should silently discard errors
      * @default true
@@ -406,12 +391,9 @@ declare global {
         const $this = $(this) as JQuery<HTMLElement>;
         options.autoFocus ??= true;
         options.offset ??= 0;
-        options.duration ??= 400;
-        options.easing ??= 'swing';
+        options.behavior ??= 'auto';
         options.direction ??= 'both';
-        options.container ??= $('html, body');
         options.callback ??= () => {};
-        options.interruptible ??= true;
         options.noThrow ??= true;
 
         const throwError = (message: string): JQuery => {
@@ -451,26 +433,25 @@ declare global {
         const properties: Record<string, number> = {};
 
         if (options.direction === 'vertical' || options.direction === 'both') {
-            properties.scrollTop = top;
+            properties.top = top;
         }
 
         if (options.direction === 'horizontal' || options.direction === 'both') {
-            properties.scrollLeft = left;
+            properties.left = left;
         }
 
-        if (!options.interruptible) {
-            options.container.stop(true, false);
-        }
-
-        options.container.animate(properties, options.duration, options.easing, function () {
-            if (options.autoFocus) {
-                $this.trigger('focus');
-            }
-
-            if (options.callback) {
-                options.callback.call($this);
-            }
+        window.scrollTo({
+            ...properties,
+            behavior: options.behavior
         });
+
+        if (options.autoFocus) {
+            $this.trigger('focus');
+        }
+
+        if (options.callback) {
+            options.callback.call($this);
+        }
 
         return $this;
     };
