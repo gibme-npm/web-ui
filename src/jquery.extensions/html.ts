@@ -64,9 +64,19 @@ type ScrollToOptions = {
 declare global {
     interface JQuery {
         /**
+         * Disables the element
+         */
+        disable(): JQuery;
+
+        /**
          * Fetches the HTML DOM Object
          */
         element<T = HTMLElement>(): T;
+
+        /**
+         * Enables the element
+         */
+        enable(): JQuery;
 
         /**
          * Reads a file from a file input field and returns the file as a Buffer
@@ -92,6 +102,11 @@ declare global {
         id(): string;
 
         /**
+         * Sets the readonly property/attribute of the element
+         */
+        lock(): JQuery;
+
+        /**
          * Returns the full selector path of the element
          *
          * @param type
@@ -109,15 +124,31 @@ declare global {
          * Returns the element type
          */
         type(): string;
+
+        /**
+         * Unsets the readonly property/attribute of the element
+         */
+        unlock(): JQuery;
     }
 
     interface JQueryStatic {
+        /**
+         * Create a form floating element set with a label
+         * @param options
+         */
+        createFloatingInput(options?: Partial<HTML.Input.Options>): JQuery<HTMLElement>;
+
         /**
          * Creates a form floating input group with a label
          *
          * @param options
          */
         createFloatingInputGroup(options?: Partial<HTML.Input.Options>): JQuery<HTMLElement>;
+
+        /**
+         * Creates an input group element
+         */
+        createInputGroup(): JQuery<HTMLElement>;
 
         /**
          * Creates a new JQuery HTML Media Element with the properties set as defined in the options
@@ -159,17 +190,15 @@ declare global {
 }
 
 ($ => {
-    $.createFloatingInputGroup = (
+    $.createFloatingInput = (
         options: Partial<HTML.Input.Options> = {}
     ): JQuery<HTMLElement> => {
         options.type ??= 'text';
         options.readonly ??= false;
         options.disabled ??= false;
+        options.id ??= options.input?.id() ?? nanoid();
 
-        const id = options.id || options.input?.id() || nanoid();
-
-        const float = $('<div>')
-            .addClass('form-floating input-group');
+        const float = $('<div class="form-floating">');
 
         const label = $('<label>');
 
@@ -181,8 +210,8 @@ declare global {
             }
         }
 
-        if (id) {
-            label.attr('for', id);
+        if (options.id) {
+            label.attr('for', options.id);
 
             if (options.type === 'file') {
                 float.removeClass('form-floating input-group');
@@ -196,8 +225,8 @@ declare global {
             const element = $('<input>')
                 .attr('type', options.type);
 
-            if (id) {
-                element.attr('id', id);
+            if (options.id) {
+                element.attr('id', options.id);
             }
 
             if (options.class) {
@@ -205,15 +234,17 @@ declare global {
             }
 
             if (options.readonly) {
-                element.attr('readonly', 'readonly');
+                element.lock();
             }
 
             if (options.disabled) {
-                element.attr('disabled', 'disabled');
+                element.disable();
             }
 
             for (const key of Object.keys(options)) {
-                if (key === 'id' || key === 'label' || key === 'class' || key === 'readonly' || key === 'disabled') {
+                if (key === 'id' || key === 'label' || key === 'class' ||
+                    key === 'readonly' || key === 'disabled' ||
+                    key === 'invalid-feedback' || key === 'valid-feedback') {
                     continue;
                 }
 
@@ -233,8 +264,8 @@ declare global {
             element.addClass('form-control')
                 .appendTo(float);
         } else {
-            if (id) {
-                options.input.attr('id', id);
+            if (options.id) {
+                options.input.attr('id', options.id);
             }
 
             options.input.addClass('form-control')
@@ -245,7 +276,47 @@ declare global {
             label.appendTo(float);
         }
 
+        if (options.valid_feedback) {
+            if (typeof options.valid_feedback === 'string') {
+                $('<div class="valid-feedback">')
+                    .text(options.valid_feedback)
+                    .attr('id', `${options.id}-valid-feedback`)
+                    .appendTo(float);
+            } else {
+                const id = options.valid_feedback.attr('id') || `${options.id}-valid-feedback`;
+
+                options.valid_feedback.attr('id', id);
+
+                options.valid_feedback.appendTo(float);
+            }
+        }
+
+        if (options.invalid_feedback) {
+            if (typeof options.invalid_feedback === 'string') {
+                $('<div class="invalid-feedback">')
+                    .text(options.invalid_feedback)
+                    .attr('id', `${options.id}-invalid-feedback`)
+                    .appendTo(float);
+            } else {
+                const id = options.invalid_feedback.attr('id') || `${options.id}-invalid-feedback`;
+
+                options.invalid_feedback.attr('id', id);
+
+                options.invalid_feedback.appendTo(float);
+            }
+        }
+
         return float;
+    };
+
+    $.createFloatingInputGroup = (
+        options: Partial<HTML.Input.Options> = {}
+    ): JQuery<HTMLElement> => {
+        return $.createInputGroup().append($.createFloatingInput(options));
+    };
+
+    $.createInputGroup = (): JQuery<HTMLElement> => {
+        return $('<div class="input-group">');
     };
 
     $.createMedia = (
@@ -306,8 +377,18 @@ declare global {
         return mode;
     };
 
+    $.fn.disable = function (): JQuery {
+        return $(this).attr('disabled', 'disabled')
+            .prop('disabled', true);
+    };
+
     $.fn.element = function<T = HTMLElement> (): T {
         return $(this)[0] as T;
+    };
+
+    $.fn.enable = function (): JQuery {
+        return $(this).removeAttr('disabled')
+            .removeProp('disabled');
     };
 
     $.fn.fileContents = async function (idx = 0): Promise<FileContents> {
@@ -361,6 +442,11 @@ declare global {
         $this.attr('id', id);
 
         return id;
+    };
+
+    $.fn.lock = function (): JQuery {
+        return $(this).attr('readonly', 'readonly')
+            .prop('readonly', true);
     };
 
     $.fn.path = function (type: 'id' | 'tagName' = 'id'): string {
@@ -458,6 +544,11 @@ declare global {
 
     $.fn.type = function (): string {
         return $(this).prev().prop('nodeName');
+    };
+
+    $.fn.unlock = function (): JQuery {
+        return $(this).removeAttr('readonly')
+            .removeProp('readonly');
     };
 })(window.$);
 

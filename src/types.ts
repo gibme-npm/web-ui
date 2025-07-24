@@ -29,10 +29,12 @@ export namespace HTML {
                 | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week';
             class: string;
             id: string;
-            label: string | JQuery<HTMLElement>
-            input: JQuery<HTMLElement>
+            label: string | JQuery<HTMLElement>;
+            input: JQuery<HTMLElement>;
             readonly: boolean;
             disabled: boolean;
+            valid_feedback: string | JQuery<HTMLElement>;
+            invalid_feedback: string | JQuery<HTMLElement>;
 
             [key: string]: string | number | JQuery<HTMLElement> | boolean | undefined;
         }
