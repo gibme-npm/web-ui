@@ -19,11 +19,11 @@
 // SOFTWARE.
 
 import { version, CDNJS } from './helpers/cdn';
-import type { WebSocketReadyState } from '@gibme/websocket';
+import type { WebSocket } from '@gibme/websocket';
 // eslint-disable-next-line import/no-named-default
 import type { default as bootstrap } from 'bootstrap';
 import './jquery.extensions/all';
-export { WebSocketReadyState };
+export { WebSocket };
 
 declare global {
     interface Window {
