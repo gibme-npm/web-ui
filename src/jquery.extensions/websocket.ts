@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import type { WebSocketClientOptions, WebSocketClient } from '@gibme/websocket';
+import type { WebSocket } from '@gibme/websocket';
 import { version, JSDELIVR } from '../helpers/cdn';
 
 declare global {
@@ -28,17 +28,17 @@ declare global {
          *
          * @param options
          */
-        websocket(options: WebSocketClientOptions): WebSocketClient;
+        websocket(options: WebSocket.Options): WebSocket;
     }
 
     interface Window {
-        WebSocketClient: typeof WebSocketClient;
+        WebSocketClient: typeof WebSocket;
     }
 }
 
 ($ => {
     const setup = () => {
-        $.websocket = (options: WebSocketClientOptions): WebSocketClient =>
+        $.websocket = (options: WebSocket.Options): WebSocket =>
             new window.WebSocketClient(options);
     };
 
