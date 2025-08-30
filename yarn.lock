@@ -83,9 +83,9 @@
     unicode-trie "^2.0.0"
 
 "@foliojs-fork/pdfkit@^0.15.2":
-  version "0.15.2"
-  resolved "https://registry.yarnpkg.com/@foliojs-fork/pdfkit/-/pdfkit-0.15.2.tgz#6dbe57ed45f1dc022d0219f3810071b9007e347e"
-  integrity sha512-Wpj6BH4DGn+zAWmCk9agdbAw3Zxt+MpemjssLfYdnretWpZ014uR6Zo51E4ftVP75UA8a7mtt4TiCu09lIKsBw==
+  version "0.15.3"
+  resolved "https://registry.yarnpkg.com/@foliojs-fork/pdfkit/-/pdfkit-0.15.3.tgz#590b31e770a98e2af62ce44f268a0d06b41ff32f"
+  integrity sha512-Obc0Wmy3bm7BINFVvPhcl2rnSSK61DQrlHU8aXnAqDk9LCjWdUOPwhgD8Ywz5VtuFjRxmVOM/kQ/XLIBjDvltw==
   dependencies:
     "@foliojs-fork/fontkit" "^1.9.2"
     "@foliojs-fork/linebreak" "^1.1.1"
@@ -207,10 +207,10 @@
   resolved "https://registry.yarnpkg.com/@gibme/timer/-/timer-20.0.0.tgz#d13943f5e6ccf0884ec6730dc35a0481ce0197c5"
   integrity sha512-F7GbCvNRxiQWyIxGQCOJe8/tXlXhUDF5Tx0ayinCfO6io1iat9ZtX0Y+QpucCdRZMwEQ/hbCdN3EAbUImD32wQ==
 
-"@gibme/websocket@^20.0.0":
-  version "20.0.0"
-  resolved "https://registry.yarnpkg.com/@gibme/websocket/-/websocket-20.0.0.tgz#b78624d7fdf5e5193489f1eba76a635b2eec3a1d"
-  integrity sha512-Ia1JP6c4k1klJW+yrYT0x94MrCmCF8jhQB3H/UTVYoT4Xb9sgDHjw3cMieH3WRxQxN9v8rhovwydUubI8eKfSQ==
+"@gibme/websocket@^20.0.1":
+  version "20.0.1"
+  resolved "https://registry.yarnpkg.com/@gibme/websocket/-/websocket-20.0.1.tgz#2126a88787e198f32a2e50ef43e9ab42ac766e29"
+  integrity sha512-YrYoVFkWWj19mFmLk2RBq++567WIRlI+w8eXF3sfi3rF6Bl/I1f6LgMFTNTJUtJaLj43Byp9Vtznn3yBOsZcEA==
   dependencies:
     "@gibme/timer" "^20.0.0"
     "@types/ws" "^8.18.1"
@@ -1189,10 +1189,10 @@ chalk@^4.0.0, chalk@^4.1.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chart.js@^4.4.1:
-  version "4.4.9"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-4.4.9.tgz#602e2fc2462f0f7bb7b255eaa1b51f56a43a1362"
-  integrity sha512-EyZ9wWKgpAU0fLJ43YAEIF8sr5F2W3LqbS40ZJyHIner2lY14ufqv2VMp69MAiZ2rpwxEUxEhIH/0U3xyRynxg==
+chart.js@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-4.5.0.tgz#11a1ef6c4befc514b1b0b613ebac226c4ad2740b"
+  integrity sha512-aYeC/jDgSEx8SHWZvANYMioYMZ2KX02W6f6uVfyteuCGcadDLcYVHdfdygsTQkQ4TKn5lghoojAsPj5pu0SnvQ==
   dependencies:
     "@kurkle/color" "^0.3.0"
 
