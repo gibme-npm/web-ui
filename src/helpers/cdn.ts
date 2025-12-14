@@ -21,6 +21,7 @@
 // this pulls in our package version(s) with a sledgehammer
 const versions = (() => {
     const regex = /([0-9]+\.[0-9]+\.[0-9]+)/;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     return (Object.entries(require('../../package.json').dependencies) as string[][])
         .filter(([name, version]) => !name.includes('@types') && version.match(regex))
         .map(([name, version]) => {

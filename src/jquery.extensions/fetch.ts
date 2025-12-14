@@ -18,7 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// eslint-disable-next-line import/no-named-default
 import type { Response, fetch } from '@gibme/fetch/browser';
 import { version, JSDELIVR } from '../helpers/cdn';
 

@@ -144,6 +144,6 @@ export namespace Remotes {
             }
         }
 
-        export interface ZipInfo extends Omit<Responses.ZipInfo, 'error'> {}
+        export type ZipInfo = Omit<Responses.ZipInfo, 'error'>;
     }
 }

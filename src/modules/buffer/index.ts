@@ -103,7 +103,6 @@ function arrayBufferToString (buffer: ArrayBuffer) {
 }
 
 export class Buffer {
-    // eslint-disable-next-line no-useless-constructor
     protected constructor (public readonly raw: ArrayBuffer, public readonly type?: string) {}
 
     /**

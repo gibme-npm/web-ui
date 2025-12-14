@@ -31,7 +31,6 @@ export default abstract class Modal {
     private static readonly emitter = new EventEmitter();
     private static _open = false;
 
-    // eslint-disable-next-line no-useless-constructor
     protected constructor () { }
 
     public static get id (): string {

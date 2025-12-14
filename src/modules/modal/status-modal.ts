@@ -41,7 +41,7 @@ export default abstract class StatusModal extends Modal {
         let message = options.body.toString();
 
         // Web3 helpers
-        // eslint-disable-next-line no-lone-blocks
+
         {
             const lower = message.toLowerCase();
 

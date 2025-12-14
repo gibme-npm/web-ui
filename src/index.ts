@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { version, CDNJS } from './helpers/cdn';
+import { version, CDNJS, JSDELIVR } from './helpers/cdn';
 import type { WebSocket } from '@gibme/websocket';
 // eslint-disable-next-line import/no-named-default
 import type { default as bootstrap } from 'bootstrap';
@@ -96,7 +96,7 @@ declare global {
 
         $('<link rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer">')
             .appendTo($(document.head))
-            .attr('href', `${CDNJS}/font-awesome/${fa}/css/all.min.css`);
+            .attr('href', `${JSDELIVR}/@fortawesome/fontawesome-free@${fa}/css/all.min.css`);
     }
 
     if (!window.bootstrap) {
